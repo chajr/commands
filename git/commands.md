@@ -37,9 +37,9 @@
 * **git checkout -- {plik}** - przywraca oryginalny plik
 * **git checkout {commit} -- {plik}** - przywraca stan pliku ze wskazanego commita
 * **git ls-files** - lista plików z ich ścierzkami w repo (-md + zmodyfikowane i usunięte)
-* **git rm --cached** - usuwa z pliki z listy do commitów
 * **git rm {plik}** - kasuje z repo plik
-* **git rm {plik}** - usuwa plik z repo
+* **git rm --cached (plik/katalog)** - usuwa plik/katalog z repozytorium, pozostawiając go na dysku
+  **-r** - dla całych katalogów
 
 ## commit
 
@@ -113,7 +113,8 @@
 * **git diff {gałąź 1} {gałąź 2} -- {plik}** - dif dla pojedynczego pliku między gałęziami
 * **git diff {plik}** - pokazuje zmiany dokonane na pliku (nie zacommitowane)
 * **git diff .** - pokazuje zmiany dokonane na wszystkich zmienionych plikach
-* **--color-words** - pokaże bez +/-
+  * **--color-words** - pokaże bez +/-
+* **git diff -p -R --no-color | grep -E "^(diff|(old|new) mode)" --color=never | git apply** - resetuje zmiany w atrybutach plików
 
 ## show
 
@@ -123,7 +124,7 @@
 * **git show {commit}** - pokazuje zmiany w commicie
 * **git show HEAD:{plik}** - pokazuje zmiany tylko w konkretnym pliku
 * **git show {commit} --name-only -p -5** - pokazuje 5 poprzednich comitów od podanego
-* **--color-words** - pokaże bez +/-
+  * **--color-words** - pokaże bez +/-
 
 ## branch
 
@@ -141,6 +142,7 @@
 * **git checkout -b {nazwa gałęzi} {nazwa remota}/{nazwa gałęzi}** - tworzy nową gałąź o podanej nazwie, pobiera zmiany ze wskazanego repozytorium i gałęzi i automatycznie przełącza się na niego
 * **git checkout {nazwa pliku}** - cofa zmiany na podanym pliku
 * **git branch rename {stara nazwa} {nowa nazwa}** - zmiana nazwy brancha
+* **git branch -m {stara nazwa} {nowa nazwa}** - zmiana nazwy brancha
 
 ## stash
 
@@ -152,10 +154,11 @@
 * **git stash pop 1**
 * **git stash pop 454aa619**
 * **git stash pop stash@{1}**
-* **git stash save "ma-sdapibau-537"** - zapisuje stash z komentarzem
+* **git stash save "{tekst komentarza}"** - zapisuje stash z komentarzem
 * **git stash show stash@{1}**- pokazuje zachowane zmiany
 * **git stash list** - lista zachowanych zmian
 * **git stash branch {name}** - stworzy nową gałąź, pobierze ostatnią wersję plików
+* **git stash push -m {message} {plik}** - stashuje z komentarzem wskazany plik
 
 ## tag
 
@@ -170,3 +173,13 @@
 
 * **git reset --soft HEAD~3**; __git commit -m__ - pozwala na cofnięcie się 3 commity do tyłu, i połączenie ich w jeden (git commit --amend)
 * **git rebase -i {commit}** - j/w ale commity wybierane ręcznie
+* **git log -i -1 --pretty="format::%an <%ae>\n" --author="$1"** - info o userze
+* **git show -s --pretty='tformat::%h (%s, %ad)' --date=short** - info o branchu
+* **git log -a --pretty=oneline | wc -l** - ilość commitów
+* **git fetch && git log --oneline HEAD..origin/$1** - ostatnie zmiany na podanym branchu
+* **git shortlog HEAD..origin/$0** - kto ostatnio robił zmiany i jakie
+* **for branch in `git branch -r | grep -v HEAD`;do echo `git show -s --format=\"%Cred%ci %C(green)%h %C(yellow)%cr %C(magenta)%an %C(blue)\" $branch | head -n 1` \\\t$branch; done | sort -r** - jakie branche sa na orginie, jak dawno i kto je tworzył
+
+### Extra
+
+[wiele przydatnych aliasów](https://github.com/jakubnabrdalik/gitkurwa)
