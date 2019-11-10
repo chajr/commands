@@ -1,0 +1,2 @@
+# Zbiór przydatnych komend
+
