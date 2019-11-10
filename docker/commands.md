@@ -26,6 +26,8 @@
 * **docker top {name}** - List of launched process inside of container
 * **docker inspect {name}** - Container details
 * **docker update {name} --restart always** - aktualizuje kontener i ustawia uruchamiania po każdym restarcie (`no` - wyłącza restart)
+* **docker run -it --name {nazwa kontenera} --rm --entrypoint /bin/bash {skrypt}** - ustawiamy własny entrypoint
+* **docker exec -i {nazwa kontenera} mysql -u {login} -p{hasło} {tabela} <<< "polecenie sql"** - bezpośrednie podanie polecenia sql do kontenera
 
 ### Docker compose commands
 
@@ -42,10 +44,7 @@
 * __docker exec -it {container} mysql -u root --password=* -e "CREATE USER '{user_name}'@'%' IDENTIFIED BY '{pass};"__
 * __docker exec -it {container} mysql -u root --password=* -e "GRANT ALL PRIVILEGES ON *.* TO '{user_name}'@'%' IDENTIFIED BY '{pass}' WITH GRANT OPTION;";__
 
+### Other
 
-screen ~/Library/Containers/com.docker.docker/Data/vms/0/tty - dostęp do virtualki z dockerem na macku
-  Ctrl+a d - wyjście
-  
-  docker run -it --name php --rm --entrypoint /bin/bash bluetree/php56
-  
-  docker exec -i 2pp-mysql mysql -u root -proot magento <<< "update setup_module set data_version='1.17.0' where module='orba_setup';select * from setup_module where module='orba_setup';"
+* **screen ~/Library/Containers/com.docker.docker/Data/vms/0/tty** - dostęp do virtualki z dockerem na macku
+  * **Ctrl+a d** - wyjście
