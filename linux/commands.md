@@ -48,6 +48,8 @@
   * **-ok rm {} \;** - pyta czy usunąć plik
   * **find . -inum {węzeł} -ok rm {} \;** - kasowanie pliku z uszkodzoną nazwą (`ls -i` - zwróci numer węzła pliku)
   * **find / –perm –4000** - znajduje pliki z ustawionym _setuid_
+* **find . -type l ! -exec test -e {} \; -print** - wyszukuje zepsute symlinki
+  * **find . -type l ! -exec test -e {} \; -print0 | xargs -0 rm** - wyszukuje i automatycznie kasuje zepsute symlinki
 * **cksum {nazwa pliku}** - pokazuje sumę kontrolną CRC i rozmiar pliku
 * **ln -s {cel} {nazwa}** - tworzy link do pliku lub katalogu
 * **"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"** - zwraca ścieżkę w której znajduje się uruchomiony skrypt
@@ -59,6 +61,8 @@
 * **lsattr {plik/katalog}** - lista rozszerzonych atrybutów (tylko partycje ext) (chattr - ustawia atrybut)
 * **chattr {plik/katalog}** - ustawia rozszerzone atrybuty
 * **find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && {polecenie}" \;** - wykonuje polecenie w każdym podkatalogu obecnej lokalizacji
+* **ls -1 | grep -Z -v '{regex}' | while read f; do mv "$f" {katalog docelowy}; done** - przenosi znalezione pliki do katalogu docelowego
+  * **exa -1**
 
 ### Pliki
 * **cat {plik 1} {plik 2} {plik n} >> {plik docelowy}** - dodaje content z plików 1, 2 i 3 do pliku docelowego
@@ -97,6 +101,8 @@
 * **grep -o {wzorzec} {plik} | sort --unique | wc -l** - ilość unikalnych wystąpień wzorca
 * **grep -o {wzorzec} {plik} | sort | uniqu -c** - pokazuje posortowane wzorce + ilość ich wystąpień
 * **grep -rcw** - szuka rekursywnie wzorca w postaci całych słów i wyświetla tylko ilość znalezionych
+  * **-l** - pokazuje tylko nazwy plikÓw z wzorcem
+  * **-L** - pokazuje tylko nazwy plikÓw bez wzorca
 * **diff {plik1} {plik2}** - porównuje ze sobą 2 pliki
   * **-y** - pokazuje w kolumnach (2 pliki, 2 kolumny)
   * **-a** - traktuja jako tekst
@@ -121,6 +127,9 @@
 * **cat << EOF > {plik}** - uruchamia wpisywanie danych do pliku, linie oddzielone enterem
   * **EOF** - kończy wpisywanie do pliku
 * **uuencode {plik} > {plik ze stringiem}** - konwertuje blik binarny na wartość tekstową (`uudecode` - proces odwrotny)
+* **find {katalog} -type f -exec du -sh {} + | sort -rh | head -n 5** - znajduje 5 największych plików w katalogu
+  * **... -type f -printf "%s %p\n" ...**
+* **expand -t 4 {input} > {output}** - zmienia taby na 4 spacje w pliku input i zapisuje do output (-i - tylko początkowe taby)
 
 ### Media
 * **identify -format '%Q' {plik}** - zwraca informacje na temat kompresji
@@ -155,7 +164,10 @@
 * **whoami** - podaje nazwę aktualnego użytkownika
 * **users** - zalogowani użytkownicy
 * **users | wc -w** - liczba zalogowanych użytkowników
-* **id** - pokazuje id użytkownika, grupy, oraz do jakich grup należy\
+* **id** - pokazuje id użytkownika, grupy, oraz do jakich grup należy
+  * **-u** - id usera
+  * **-g** - id grupy
+  * **-G** - wszystkie grupy usera
 * **sudo su - {nazwa użytkownika}** - przełącza na konto innego użytkownika
 * **groups** - pokazuje grupy do których należy użytkownik
 * **w** - pokazuje kto jest zalogowany i co robi
@@ -172,9 +184,13 @@
 * **sudo su - {nazwa użytkownika} -c "{polecenie}"** - jak powyżej
 * **su - {user}** - przełącza usera
 * **usermod** - modyfikuje ustawienia użytkownika
-* **usermod -a -G {grupa} {user}** - dodaje usera do grupy
-* **gpasswd -a {user} {grupa}** - j/w
+  * ** -u {id} {user}** - zmienia id usera
+  * ** -a -G {grupa} {user}** - dodaje usera do grupy
+* **gpasswd -a {user} {grupa}** - dodaje usera do grupy
 * **htpasswd {user} {pass}** - tworzy plik htpasswd (-c nowy plik o wskazanej nazwie)
+* **groupmod -g {id} {grupa}** - zmienia id grupy
+* **find / -group {id} -exec chgrp -h {user} {} \ || true** - szuka plikw z podanym id usera i zmienia im usera;
+* **find / -user {id} -exec chown -h {grupa} {} \ || true** - szuka plikw z podanym id grupy i zmienia im grupę;
 
 ---
 ## Data i czas
@@ -228,6 +244,8 @@
 * **crontab -l -u {user}** - 
 * **vim /etc/crontab** - systemowy crontab (/etc/cron.hourly/)
 * **for user in $(cut -f1 -d: /etc/passwd); do echo $user; crontab -u $user -l 2>/dev/null | grep -v '^#; done** - lista wpisów dla wszystkich userów
+* **smem -t -P {proces}** - podaje zużycie pamięci wszystkich procesów pasujących do wzorca
+* **smem -t -k -c pss -P {proces} | tail -n 1** - jw ale podsumowanie dla bardziej realnych danych (pamięć tylko procesu, nie współdzielona)
 
 ### Urządzenia
 * **mount {urządzenie} {ścieżka docelowa}** - montuje urządzenie
@@ -341,13 +359,13 @@
  * **netstat -tulnp tcp** - tylko tcp
 * **sudo lsof -i -P -n | grep LISTEN** - lista otwartych portów i procesów ich nasłuchujących
 * **sudo lsof -i -nP** - pokazuje używane porty oraz powiązane z nimi procesy
-* **iostat -d /dev/sda | sed -n "4p"** - pokazuje zużycie sieci
+* **nethogs"** - pokazuje zużycie sieci i transfery do konkretnych hostów
 * **ip route get 8.8.8.8 | awk '{print $NF; exit}'** - pokazuje ip komputera wewnątrz sieci
 * **hostname --ip-address** - lokalne ip komputera
 * **nmap -sn {ip}/24** - skanuje adresy w poszukiwaniu hostów (/24,16,8 - mask adresu np /16 -> 127.0.x.x, 24 -> 127.0.0.x)
 * **nmap {hostname}** - pokazuje otwarte porty i serwisy na podanym hoście
   * **nmap -p 1-1000 {hostname}** - pokazuje otwarte porty i serwisy na podanym hoście od 1 do 1000
-  * **nmap -sn 192.168.1.0/24** - skanuje w poszukiwaniu działających ip
+  * **nmap -sn 192.168.0.0/24** - skanuje w poszukiwaniu działających ip
   * **arp-scan 192.168.0.0/24** - j/w
 * **hostname -I** - pokazuje lokalne ip komputera
 * **hostname -f** - nazwa hosta (długa, -s - krótka)
@@ -372,7 +390,10 @@
   * **-sS** - pokazuje błędy tylko jeśli zapytanie się nie udało
   * **-v --ipv4 -I** - pokazuje krok po kroku co dzieje się z zapytaniem
   * **-k** - pozwala na połączenie jeśli są problemy z certyfikatem ssl
+  * **-w {format}** - formatuje wyjście względem ustawionego formatu
+  * **-u {username:password}** - logowanie przez basic http authorization
 * **for ((i=0;i<=30;i++)); do curl -I "{url}/$i"; done;** - odpala 30 url-i z dopiskiem numeru na końcu i zwraca tylko headery
+  * **curl -s -o /dev/null -w "%{http_code}\\n"** - pokaże tylko kody odpowiedzi http
 * **whois {domena}** - podaje informacje o domenie internetowej
 * **dig {domena}** - informacje o DNS
 * **wget -r {url}** - pobiera rekursywnie z podanego url-a
@@ -385,12 +406,12 @@
 * **ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}'** - j/w
 * __ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'__ - j/w
 * __ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'__ - j/w
-* **nc {ip} {port}** - ustawa połączenie tcp & udp z serwerem
+* **nc {ip} {port}** - ustawia połączenie tcp & udp z serwerem
 * **nc -z -v 127.0.0.1 1-1000** - skanowanie portów od 1 do 1000
   * **nc -z 127.0.0.1 1-100** - tylko te z którymi udało się połączyć
   * **nc -z -n -v 127.0.0.1 1-1000 2>&1 | grep succeeded** - j/w
 * **nc -l {port}** - nasłuchuje na porcie
-  * **nc -l {port}| tar xzvf -** - zapisuje output do spakowanego pliku
+  * **nc -l {port} | tar xzvf -** - zapisuje output do spakowanego pliku
   * **tar -czf - * | nc {ip} {port}** - wysyła spakowane pliki przez netcata
 * **while true; do printf 'HTTP/1.1 200 OK\n\n%s' "$(cat index.html)" | nc -l {port}; done** - tworzy prosty serwer pokazujący plik index.html (while - żeby działało cały czas)
 * **iptables -I INPUT -p tcp -m tcp --dport {port} -j ACCEPT** - dodaje port do wpisu w+ iptables
@@ -475,6 +496,10 @@
 * **alias {alias}** - j/w
 * **xfd -fa "{czcionka}"** - pokazuje pełną listę znaków dla podanej czcionki
 * **sudo sshfs -p {port} -o allow_other,IdentityFile={id_rsa} {domena}:{katalog} /mnt/{punk montowania}** - montuje jako dysk katalog na zewnętrznym serwerze
+* **htpasswd -nb -B {user} {pass} | cut -d ":" -f** - generuje i zwraca hash hasła
+* **grep -r -P '[^\x00-\x7f]' {plik}** - wyszukuje znaki unicode w pliku
+* **openssl passwd -apr1** - generuje hash hasła
+  * **openssl rand -hex {długość}** - generuje hasło o podanej długości (*2)
 
 ---
 
@@ -486,9 +511,14 @@
 * **awk '{gsub(/{pattern}/,"{replace}")}' {plik}** - Szuka i zastępuje wszystkie wzorce znalezione w pliku
   * **awk '{gsub(/[0-9]+\.216\.104\.10/,"10.216.104.1")}' php.ini**
 * **sed -n '44,92p' {plik}** - pokazuje linie 44-92 z pliku (samo 92p - 92 linia)
-* **sed -i --'s/{pattern}/{replace}/g' {plik}** - zastępuje znaleziony wzorzec w pliku
+* **sed -i -- 's/{pattern}/{replace}/g' {plik}** - zastępuje znaleziony wzorzec w pliku
 * **... | cut -d' ' -f1** - tnie po spacji i podaje pierwszy element (-f 2- - od 2 i dalej; -2 do 2)
 * **sed -i '1s/^/{string}\n/' {plik}** - dodaje string na początek pliku
+* **tr ':' '\n'** - zamienia podany znak na inny, tu : na nową linię
+  * **tr 'a-z' 'A-Z'** - zamienia litery na duże
+  * **tr -d ‘is’** - kasuje wyrażenie
+  ** **tr -s " "** - zastępuje wiele spacji pojedynczą
+  * **tr -cd** - kasuje nieliczbowe znaki
 
 ---
 
@@ -533,3 +563,24 @@
 * **ctrl+r** - szuka poprzedniej komendy
 * **ctrl+d** - wylogowuje z obecnej sesji
 * **!!** - powtarza poprzednie polecenie
+* **!-6** - uruchamia komendę uruchomioną 6 kroków wcześniej
+* **!$** - argumenty poprzednio uruchomionej komendy
+* **!^** - pierwszy argument poprzednio uruchomionej komendy
+* **!{komenda}:2** - drugi argument ostatnio uruchomionej komendy podanej w nawiasach
+
+---
+
+## Ubuntu
+* **sudo dpkg -i --force-overwrite {*.deb}** - wymusza uruchomienie pakietu
+* **sudo apt -f --fix-broken install** - naprawia zależności
+
+## Suse
+* **cat /var/log/boot.log** - 2
+* **tail -30 /var/log/messages** - 
+* **tail -30 /var/log/messages | awk '{print $3,$5,$6,$7,$8,$9,$10}'** - 
+* **zypper search -s {openssh}** - szuka pakietu z poprzednimi wersjami 
+* **sudo zypper install --oldpackage {openssh-7.6p1-lp150.7.4}** - zainstalowanie starszej wersji pakietu
+ 
+## MacOS
+
+---
