@@ -17,6 +17,7 @@
 * **df -h** - pokazuje zajętość wszystkich dysków
 * **df -a** - pokazuje zajętość wszystkich urządzeń
 * **df -hT** - pokazuje zajętość punktu montowania wraz z systemem plików
+* **pydf** - pythonowa wersja _df_
 * **chmod 0755 {nazwa pliku/katalogu}** - zmiana praw dostępu (4-read, 2-write, 1-execute)
 * **chmod ugo-x {nazwa pliku/katalogu}** - odbiera prawa wykonywania wszystkim użytkownikom (user, group, other)
   * **chmod g=-w;o=-w {plik}**
@@ -63,6 +64,8 @@
 * **find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && {polecenie}" \;** - wykonuje polecenie w każdym podkatalogu obecnej lokalizacji
 * **ls -1 | grep -Z -v '{regex}' | while read f; do mv "$f" {katalog docelowy}; done** - przenosi znalezione pliki do katalogu docelowego
   * **exa -1**
+* **basename {pełna ścieżka do pliku}** - zwraca nazwę pliku z podanej ścieżki
+  * **{ścieżka} {rozszerzenie}** - zwraca tylko nazwę pliku bez rozszerzenia
 
 ### Pliki
 * **cat {plik 1} {plik 2} {plik n} >> {plik docelowy}** - dodaje content z plików 1, 2 i 3 do pliku docelowego
@@ -75,6 +78,7 @@
 * **nl {nazwa pliku}** - pokazuje zawartość pliku wraz numerami linii
 * **dd** - kopiowanie pliku wraz z konwersją typu (dd if=/home/user/Downloads/debian.iso of=/dev/sdb1 bs=512M; sync)
 * **dd id=/dev/device of=~/device.img** - kopiuje każdy bajt z urządzenia device do pliku
+  * **conv=noerror,syn** - uszkodzone dane zastępuje nullem
 * **rm {nazwa pliku}** - kasuje plik
 * **touch {nazwa pliku}** - tworzy pusty plik
 * **ls -la | grep ^- | wc -l** - pokazuje liczbę plików w katalogu (-lar - + podkatalogi)
@@ -84,7 +88,8 @@
 * **tail -f {nazwa pliku}** - pokazuje zmiany na żywo w podanym pliku
 * **tail -2 {plik}** - wyświetla 2 ostatnie linie w pliku
 * **stat {nawza pliku}** - rozszerzone informacje o pliku
-* **file {nazwa pliku}** - pokazuje typ pliku
+* **file {nazwa pliku}** - pokazuje typ pliku i kodowanie
+  * **-i** - uproszczona informacja
 * **head -2 {plik}** - pokazuje 2 wiersze z podanego pliku
 * **head -c5 {plik}** - wyświetli 5 pierwszych liter
 * **md5sum {plik}** - oblicza sumę md5 
@@ -99,10 +104,13 @@
 * **grep -C 2 {pattern}** - zwraca 2 linie otaczające znaleziony fragment (2 z góry i 2 z dołu)
 * **grep --include={plik} -A 1 -rn {ścieżka} -e {wzorzec}** - szuka wzorca w ścieżce i podanym pliku, wyświetla ścieżkę, numer linii + linia poniżej znalezionej
 * **grep -o {wzorzec} {plik} | sort --unique | wc -l** - ilość unikalnych wystąpień wzorca
-* **grep -o {wzorzec} {plik} | sort | uniqu -c** - pokazuje posortowane wzorce + ilość ich wystąpień
+* **grep -o {wzorzec} {plik} | sort | uniq -c** - pokazuje posortowane wzorce + ilość ich wystąpień
 * **grep -rcw** - szuka rekursywnie wzorca w postaci całych słów i wyświetla tylko ilość znalezionych
+  * **-E** - rozszerzony regexp
+  * **-h** - bez nazw plików
   * **-l** - pokazuje tylko nazwy plikÓw z wzorcem
   * **-L** - pokazuje tylko nazwy plikÓw bez wzorca
+  * **-o** - tylko dopasowany wzorzec
 * **diff {plik1} {plik2}** - porównuje ze sobą 2 pliki
   * **-y** - pokazuje w kolumnach (2 pliki, 2 kolumny)
   * **-a** - traktuja jako tekst
@@ -110,10 +118,16 @@
   * **-w** - ignoruje biale spacje
   * **diff <(sed -n '1p' {plik}) <(sed -n '1p' {plik})**
   * **diff -Nyrw dir1 dir2** - pokazuje różnice w plikach między dwoma katalogami
+  * **--color** - koloryzuje output
+  * **-s** - podaje tylko info czy pliki się różnią
+  * **-i** - nie rozróżnia wielkości znaków
+  * **-u** - output podobny do git-a
 * **find {pattern} | xargs rm** - szuka plików i kasuje wszystkie znalezione
 * **ls -laR | grep ^- | wc -l** - zlicza ilość plików w katalogu i podkatalogach
 * **find . -type f | sort -R | tail -1** - wyszukuje losowy plik
 * **locate {file}** - znajduje wszystkie pliki o podanej nazwie
+  * **-i** - ignoruje wielkość znaków
+  * **-r {expression}** - szuka używając regex
 * **cmp {plik1} {plik2}** - pokazuje różnicę między plikami
 * **cmp --verbose {pliki}** - pokazuje kody różnic (bajt różnicy, kod znaku 1, kod znaku 2)
 * **cmp -bl <(sed -n '1p' {plik}) <(sed -n '1p' {plik})** - porównuje pierwsze linie z plików
@@ -176,6 +190,8 @@
 * **mesg** - status wyświetlania wiadomości w terminalu (mesg y - włącza, mesg n - wyłącza)
 * **write {użytkownik}** - włącza tryb pisania wiadomości do użytkownika
 * **passwd** - zmiana własnego hasła
+  * **-l** - blokuje użytkownika
+  * **-u** - odblokowuje użytkownika
 * **adduser {user} {grupa}** - dodaje nowego użytkownika
 * **userdel {nazwa}** - usuwa użytkownika
 * **addgroup {nazwa}** - dodaje grupę
@@ -186,6 +202,9 @@
 * **usermod** - modyfikuje ustawienia użytkownika
   * ** -u {id} {user}** - zmienia id usera
   * ** -a -G {grupa} {user}** - dodaje usera do grupy
+  * **-L** - blokuje użytkownika
+  * **-U** - odblokowuje użytkownika
+  * **--expiredate 1970-01-02** - data wygaśnięcia hasła
 * **gpasswd -a {user} {grupa}** - dodaje usera do grupy
 * **htpasswd {user} {pass}** - tworzy plik htpasswd (-c nowy plik o wskazanej nazwie)
 * **groupmod -g {id} {grupa}** - zmienia id grupy
@@ -246,6 +265,10 @@
 * **for user in $(cut -f1 -d: /etc/passwd); do echo $user; crontab -u $user -l 2>/dev/null | grep -v '^#; done** - lista wpisów dla wszystkich userów
 * **smem -t -P {proces}** - podaje zużycie pamięci wszystkich procesów pasujących do wzorca
 * **smem -t -k -c pss -P {proces} | tail -n 1** - jw ale podsumowanie dla bardziej realnych danych (pamięć tylko procesu, nie współdzielona)
+* **ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head** - zwraca procesy zużywające najwięcej ram-u i cpu
+* **cat /proc/meminfo** - szczegóły na temat pamięci
+* **vmstat** - 
+* **dmidecode** - 
 
 ### Urządzenia
 * **mount {urządzenie} {ścieżka docelowa}** - montuje urządzenie
@@ -255,9 +278,9 @@
 * **sudo mount -r -o loop {obraz.iso} {/katalog}** - montuje obraz.iso do katalogu /katalog (-r tylko do odczytu)
 * **sudo mount -t auto -o loop {name}.img {dir}** - montuje obraz (-t automatycznie wybiera system plików)
 * **blkid** - id urządzeń blokowych
+* **hwinfo --short --block** - informacje o urządzeniach blokowych
 * **sudo fsck -Cyv {/dev/sdx}** - skanuje i naprawia system plików na dysku
 * **lsusb** - lista urządzeń usb
-* **sudo fdisk -l** - pokazuje informacje o systemie plików
 * **sudo lshw** - pełna lista urządzeń systemowych
   * **-short** - jak wyżej, wersja skrócona (`-html` zapisuje w wersji html)
   * **-class disk** - informacje o dyskach
@@ -296,6 +319,7 @@
   * **dcfldd** - bardziej rozbudowana wersja **dd** [github](https://github.com/adulau/dcfldd)
 * **sudo mkfs -t ext4 {name}.img** - tworzy partycję na podanym obrazie
 * **fdisk -l** - wyświetlenie partycji i informacji na ich temat
+* **sfdisk -l** - bardziej zaawansowany fdisk
 * **lsblk -o NAME,FSTYPE,MOUNTPOINT,PARTLABEL,SIZE,RO** - lista urządzeń blokowych z listą informacji (nazwa, system plików, punkt montowania, label, rozmiar, tylko do odczytu)
 * **sudo fdisk /dev/sdg** - operacje na dysku
 
@@ -316,6 +340,7 @@
 * **ps -p {id} -o %cpu,%mem** - pokazuje zużycie ramu i procesora dla podanego procesu
   * **watch -n 1 -d "ps -p {id} -o %cpu,%mem"**
 * **nohup ./{nazwa}.sh > {nazwa}.log &** - uruchamia proces ze skryptu z zapisem do logu, tak aby działał dalej po wyjściu z konsoli
+* **nohup docker exec -i {kontener} {polecenie} > {log} 2>&1 & echo $! > {pid}** - uruchamia proces w kontenerze, tak aby działał w tle i zapisuje id procesu do pliku
 * **bg** - pokazuje procesy w tle
   * **fg {nazwa}** - przywraca podany proces
 * **fg {proces}** - przenosi podany proces w tło
@@ -335,6 +360,10 @@
 * **pidstat -hruvp {pid1}{pid2} 5** - monitoruje 2 procesy i pokazuje co 5s
 * **pmap -x {proces id}** - podaje szczegółowe informacje na temat zużycia pamięci przez proces i jego zależności
 * **ps --no-headers -o "rss,cmd" -C {nazwa procesu} | awk '{ sum+=$1 } END { printf ("%d%s\n", sum/NR/1024,"Mb") }'** - sumaryczne zużycie pamięci dla procesu
+* **timeout 5s {command}** - odpala komendę przez 5 sekund (s, m, h, d)
+  * **-k** - wymusza zabicie procesu po określonym czasie
+* **timeout 8s tail -f {plik}** - tail na pliku przez 8 sekund
+* **timelimit -t10 tail -f {plik}** - j/w ale przez 10 sekund
 
 ---
 
@@ -345,13 +374,21 @@
 * **ifconfig {nazwa sieci}** - pokazuje informacje o wskazanej sieci
 * **ifconfig {nazwa sieci} | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'** - zwraca adres lokalny komputera
 * **ifconfig {nazwa sieci} {down|up}** - wyłącza lub włącza sieć
+* **ifconfig {nazwa sieci} {ip} netmask {maska}** - ustawia ip i maskę dla sieci, po restarcie ustawienia znikają
+* **ifup {nazwa sieci}** - uruchamia sieć (ifdown - wyłącza)
 * **ssh-keygen** - generuje nowy klucz ssh
 * **mtr {ip lub domena}** - połączenie ping i traceroute
+* **traceroute {ip}** - pokazuje listę punktów przez które idzie połączenie
+* **route** - pokazuje tablicę routingu
+  * **route add -net {ip/zakres} gw {brama}** - dodaje wpis do tablicy routingu (del - kasuje)
 * **scp -r {źródło} {cel}** - kopiuje plik poprzez ssh (user@192.128.0.1:/some/path/file) razem z podkatalogami
   * **-l {val}** - limit transferu w Kbit/s (8000 -> 1MB)
 * **curl ipinfo.io** - bardziej szczegółowe informacje o komputerze
 * **netstat** - wyświetla listę aktywnych połączeń TCP i UDP
 * **netstat -at** - lista portów TCP
+* **netstat -ai** - statystyki interfejsów sieciowych
+* **netstat -nr** - tablica routingu
+* **netstat -ant** - pokazuje połączenia sieciowe
 * **netstat -nr | awk '{ if ($1 ~/default/) { print $6} }'** - nazwa aktualnie używanej sieci
 * **netstat -anp tcp | grep -i "listen"** - pokazuje nasłuchiwane połączenia tcp
 * **netstat -nr** - pokazuje tablicę routingu
@@ -392,10 +429,19 @@
   * **-k** - pozwala na połączenie jeśli są problemy z certyfikatem ssl
   * **-w {format}** - formatuje wyjście względem ustawionego formatu
   * **-u {username:password}** - logowanie przez basic http authorization
+  * **-C - -O** - wznawia przerwane pobieranie
+  * **-x {adres serwera proxy}** - łączy przez proxy
+  * **--user-agent {nazwa}** - ustawia user agenta (no opera zamiast curl)
+  * **--cookie-jar {plik dla cookie} {adres} -O** - zapisuje ciasteczka pobrane ze strony
+  * **--cookie {plik cookie} {adres}** - wysyła cookie
+  * **--limit-rate 100K** - ogranicza transfer do 100kB
+  * **xargs -n 1 curl -O < {lista plików}** - pobiera pliki z listy
 * **for ((i=0;i<=30;i++)); do curl -I "{url}/$i"; done;** - odpala 30 url-i z dopiskiem numeru na końcu i zwraca tylko headery
   * **curl -s -o /dev/null -w "%{http_code}\\n"** - pokaże tylko kody odpowiedzi http
 * **whois {domena}** - podaje informacje o domenie internetowej
 * **dig {domena}** - informacje o DNS
+  * **dig {domena} MX +short** - pokazuje wpisy MX, short - wersja skrócona
+* **nslookup {domena}** - jw
 * **wget -r {url}** - pobiera rekursywnie z podanego url-a
   * **-O {plik}** - zapisuje output do pliku
   * **-c** - wznawia ściąganie częściowo ściągniętego pliku
@@ -406,12 +452,12 @@
 * **ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}'** - j/w
 * __ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'__ - j/w
 * __ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'__ - j/w
-* **nc {ip} {port}** - ustawia połączenie tcp & udp z serwerem
+* **nc {ip} {port}** - ustawa połączenie tcp & udp z serwerem
 * **nc -z -v 127.0.0.1 1-1000** - skanowanie portów od 1 do 1000
   * **nc -z 127.0.0.1 1-100** - tylko te z którymi udało się połączyć
   * **nc -z -n -v 127.0.0.1 1-1000 2>&1 | grep succeeded** - j/w
 * **nc -l {port}** - nasłuchuje na porcie
-  * **nc -l {port} | tar xzvf -** - zapisuje output do spakowanego pliku
+  * **nc -l {port}| tar xzvf -** - zapisuje output do spakowanego pliku
   * **tar -czf - * | nc {ip} {port}** - wysyła spakowane pliki przez netcata
 * **while true; do printf 'HTTP/1.1 200 OK\n\n%s' "$(cat index.html)" | nc -l {port}; done** - tworzy prosty serwer pokazujący plik index.html (while - żeby działało cały czas)
 * **iptables -I INPUT -p tcp -m tcp --dport {port} -j ACCEPT** - dodaje port do wpisu w+ iptables
@@ -420,6 +466,11 @@
 * **iptables --list** - lista wpisów
 * **iptables-save** - zapisuje ustawienia
 * **iptables -A INPUT -s {ip} -p tcp --destination-port {port} -j DROP** - blokuje wskazany port
+* **swaks --to {mail docelowy} --server {serwer mailingowy}:{port} --body "{treść}" --header "{temat}"** - wysyła prostego maila
+* **host {domena}** - podaje IP domeny
+  * **host -t CNAME {domena}** podaje wpisy CNAME domeny (CNAME, NS, MX, SOA)
+* **arp -e** - zwraca tablicę ARP (Address Resolution Protocol)
+* **iwconfig** - ustawia sieć wifi
 
 ---
 
@@ -512,13 +563,25 @@
   * **awk '{gsub(/[0-9]+\.216\.104\.10/,"10.216.104.1")}' php.ini**
 * **sed -n '44,92p' {plik}** - pokazuje linie 44-92 z pliku (samo 92p - 92 linia)
 * **sed -i -- 's/{pattern}/{replace}/g' {plik}** - zastępuje znaleziony wzorzec w pliku
-* **... | cut -d' ' -f1** - tnie po spacji i podaje pierwszy element (-f 2- - od 2 i dalej; -2 do 2)
+  * **'2!d'** - druga linia z pliku
+* **cut -c {początek}-{koniec}, {początek}-{koniec} {plik}** - tnie plik po zakresie podanych znaków
+  * **-b** - tnie po zakresie podanych bajtów
+  * **... | cut -d' ' -f1** - tnie po spacji i podaje pierwszy element (-f 2- - od 2 i dalej; -2 do 2)
+  * **-s** - tnie od tyłu
+  * **--output-delimiter="--"** - ustawiam symbol do rozdzielenia
 * **sed -i '1s/^/{string}\n/' {plik}** - dodaje string na początek pliku
 * **tr ':' '\n'** - zamienia podany znak na inny, tu : na nową linię
   * **tr 'a-z' 'A-Z'** - zamienia litery na duże
   * **tr -d ‘is’** - kasuje wyrażenie
   ** **tr -s " "** - zastępuje wiele spacji pojedynczą
   * **tr -cd** - kasuje nieliczbowe znaki
+* **hexdump -C** - pokazuje dane w postaci hex
+* **fold -w 80 -s {plik wejściowy} > {plik wyjściowy}** - dodaje przełamanie linii w pliku w 80 kolumnie
+* **uniq {plik1} {plik2}** - zbiera unikalne wpisy z pliku1 i zapisuje do pliku2
+  * **-c** - podaje liczbę powtórzeń
+  * **-d** - pokazuje tylko zduplikowane linie
+  * **-u** - pokazuje tylko nie zduplikowane linie
+  * **-w {liczba}** - porównuje podaną liczbę znaków
 
 ---
 
@@ -580,6 +643,18 @@
 * **tail -30 /var/log/messages | awk '{print $3,$5,$6,$7,$8,$9,$10}'** - 
 * **zypper search -s {openssh}** - szuka pakietu z poprzednimi wersjami 
 * **sudo zypper install --oldpackage {openssh-7.6p1-lp150.7.4}** - zainstalowanie starszej wersji pakietu
+* **zypper list-updates** - lista dostępnych updatów
+* **zypper dup** - pełen upgrade
+* **zypper info {pakiet}** - informacje o pakiecie
+* **zypper al {pakiet}** - blokuje pakiet przed zmianami
+  * **rl** - usuwa blokadę
+* **zypper ll** - lista pakietów
+* **zypper lr** - lista repozytoriów
+* **zypper shell** - konsola zypper
+* **zypper ... --xmlout** - pokazuje output w xml
+* **zypper clean** - czyści cache
+* **cat /var/log/zypp/history** - logi zyppera
+* **zypper dist-upgrade** - upgrade całej dystrybucji
  
 ## MacOS
 
