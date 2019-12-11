@@ -104,8 +104,55 @@
 * **Output of json_decode for object as array:** `var_dump(json_decode($string, null, 512, JSON_OBJECT_AS_ARRAY));`
 
 ## 7.3
+* **Flexible Heredoc** - Allow to indent for end of herodoc
+* **Allow a trailing comma in function calls** - `function($param, $param2,)`
+* **JSON_THROW_ON_ERROR** - When passed to `json_decode/json_encode` allow to throw `JsonException`
+* **PCRE2 Migration**
+* **list() Reference Assignment** - `list($a, &$b) = $array;`
+* **is_countable** - Check is value will be acceptable by `count` function
+* **array_key_first(), array_key_last()** - Return first & last key of array
+* **Make compact function reports undefined passed variables** - $baz = compact('foz'); // Notice: compact(): Undefined variable: foz
+* **Argon2 Password Hash Enhancements**
+* **Deprecate and Remove image2wbmp()**
+* **Deprecate and Remove Case-Insensitive Constants** - all const must be upper case
+* **Same Site Cookie**
 
+## 7.4
+* **Deprecate alternate access to array elements and chars in string** - unable to use `{}` to access char on string, or array element
+* **E_WARNING for invalid containers** - show warning when try to access not existing array key `$a=[1];var_dump($a[1])`
+* **Base Convert improvements** - Error on ignored characters & Allow negative arguments
+* **Numeric Literal Separator** - Allow to add separator into int val `$i=1_000_000_000`, `$i=135_00`, available for float, int, octal, hex, bin
+* **Allow throwing exceptions from __toString()**
+* **Spread Operator in Array Expression** - `$parts = ['apple', 'pear'];$fruits = ['banana', 'orange', ...$parts, 'watermelon'];`
+* **Deprecate left-associative ternary operator**
+* **Arrow Functions** - `function ($x) use ($arr) { return $arr[$x]; }` -> `fn($x) => $arr[$x]`
+* **Weak References**
+* **FFI - Foreign Function Interface** - allow to execute C language as script
+* **Typed Properties 2.0** - `class User { public int $id;}`
+* **Null Coalescing Assignment Operator** - `??=` operator, `$this->request->data['comments']['user_id'] ??= 'value';`
+* **Preloading (opcache.preload)** - Allow to preload PHP file to OPcache, before it execution
+* **Hash extension is always available**
+* **Password Hashing Registry**
+* **mb_str_split**
+* **Reflection for references**
+* **New custom object serialization mechanism** - `__serialize()` & `__unserialize(array $data)` methods
+* **Escape PDO "?" parameter placeholder** - `$pdo->prepare('SELECT * FROM tbl WHERE json_col ?? ?');` will be convert into `SELECT * FROM tbl WHERE json_col ? 'foo'`
+* **Covariant Returns and Contravariant Parameters** - Allow to override defined type in child by similar type
+```
+interface Factory {
+    function make(): object;
+}
+ 
+class UserFactory implements Factory {
+    function make(): User;
+}
 
-
-
-https://wiki.php.net/rfc#php_73
+interface Concatable {
+    function concat(Iterator $input); 
+}
+ 
+class Collection implements Concatable {
+    // accepts all iterables, not just Iterator
+    function concat(iterable $input) {/* . . . */}
+}
+```
