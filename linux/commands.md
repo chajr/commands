@@ -17,6 +17,7 @@
 * **df -h** - pokazuje zajętość wszystkich dysków
 * **df -a** - pokazuje zajętość wszystkich urządzeń
 * **df -hT** - pokazuje zajętość punktu montowania wraz z systemem plików
+* **df -hi** - pokazuje informacje o inodach dla punktów montowania
 * **pydf** - pythonowa wersja _df_
 * **chmod 0755 {nazwa pliku/katalogu}** - zmiana praw dostępu (4-read, 2-write, 1-execute)
 * **chmod ugo-x {nazwa pliku/katalogu}** - odbiera prawa wykonywania wszystkim użytkownikom (user, group, other)
@@ -31,6 +32,10 @@
 * **tree** - drzewo katalogów i plików
 * **tree -ugphD** - drzewo katalogów i plików wraz z informacjami o plikach i katalogach
 * **find -iname {nazwa pliku}** - szuka podanego pliku bez uwzględnienia wielkości liter
+* **find {ścieżka} -regex {regex}** - szuka podanego pliku używając wyrażeń regularnych
+  * **-regex {regex}** - sprawdza ścieżkę pod względem regex
+  * **-iregex {regex}** - to samo ale bez uwzględniania wielkości liter
+* **find -E {ścieżka} -regex {regex}** - szuka podanego pliku używając rozszerzonych wyrażeń regularnych
 * **find -size +100M** - szuka plików powyżej 100mb
 * **find / {pattern}** - wyszukuja podanego wzorca w głównym katalogu i podkatalogach
 * __find . -maxdepth 1 -name '*.json' -delete__ - usuwa dużą ilość plików z rozszerzeniem `*.json`
@@ -61,6 +66,8 @@
 * **echo {pliki/katalogi} | xargs -n 1 cp -vr {katalog}** - kopiuje pliki/katalogi do katalogu (-n ile przyjmuje argumentów, 1-każdy element z echo)
 * **lsattr {plik/katalog}** - lista rozszerzonych atrybutów (tylko partycje ext) (chattr - ustawia atrybut)
 * **chattr {plik/katalog}** - ustawia rozszerzone atrybuty
+  * **+i** - plik jest zablokowany przed zamianami (-i zdejmuje blokadę)
+  * **-R** - rekursywnie dla katalogu
 * **find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && {polecenie}" \;** - wykonuje polecenie w każdym podkatalogu obecnej lokalizacji
 * **ls -1 | grep -Z -v '{regex}' | while read f; do mv "$f" {katalog docelowy}; done** - przenosi znalezione pliki do katalogu docelowego
   * **exa -1**
@@ -92,7 +99,7 @@
   * **-i** - uproszczona informacja
 * **head -2 {plik}** - pokazuje 2 wiersze z podanego pliku
 * **head -c5 {plik}** - wyświetli 5 pierwszych liter
-* **md5sum {plik}** - oblicza sumę md5 
+* **md5sum {plik}** - oblicza sumę md5
 * **sha1sum {plik}** oblicza sumę sha1
 * **wc -l {plik}** - liczba linii w pliku
 * **find . -type f | wc -l** - liczba samych plików w katalogu
@@ -210,6 +217,9 @@
 * **groupmod -g {id} {grupa}** - zmienia id grupy
 * **find / -group {id} -exec chgrp -h {user} {} \ || true** - szuka plikw z podanym id usera i zmienia im usera;
 * **find / -user {id} -exec chown -h {grupa} {} \ || true** - szuka plikw z podanym id grupy i zmienia im grupę;
+* **usermod --shell /usr/bin/zsh {user}** - zmiana shella
+  * **chsh -s /usr/bin/zsh**
+  * **chsh --shell /bin/sh**
 
 ---
 ## Data i czas
@@ -258,17 +268,17 @@
 * **lslk** - lista locków
 * **modprobe -a {modul1} {modul2}** - ładuje podane moduły które pasują do wzorca
   * **-c** - lista załadowanych modułów
-* **crontab -e** - 
+* **crontab -e** - edycja crontaba
 * **crontab -l** - lista wpisów w contab
-* **crontab -l -u {user}** - 
+* **crontab -l -u {user}** - lista cronów dla podanego usera
 * **vim /etc/crontab** - systemowy crontab (/etc/cron.hourly/)
 * **for user in $(cut -f1 -d: /etc/passwd); do echo $user; crontab -u $user -l 2>/dev/null | grep -v '^#; done** - lista wpisów dla wszystkich userów
 * **smem -t -P {proces}** - podaje zużycie pamięci wszystkich procesów pasujących do wzorca
 * **smem -t -k -c pss -P {proces} | tail -n 1** - jw ale podsumowanie dla bardziej realnych danych (pamięć tylko procesu, nie współdzielona)
 * **ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head** - zwraca procesy zużywające najwięcej ram-u i cpu
 * **cat /proc/meminfo** - szczegóły na temat pamięci
-* **vmstat** - 
-* **dmidecode** - 
+* **vmstat** - informacje o pamięci virtualnej
+* **dmidecode** - DMI table decoder
 
 ### Urządzenia
 * **mount {urządzenie} {ścieżka docelowa}** - montuje urządzenie
@@ -361,8 +371,8 @@
 * **pmap -x {proces id}** - podaje szczegółowe informacje na temat zużycia pamięci przez proces i jego zależności
 * **ps --no-headers -o "rss,cmd" -C {nazwa procesu} | awk '{ sum+=$1 } END { printf ("%d%s\n", sum/NR/1024,"Mb") }'** - sumaryczne zużycie pamięci dla procesu
 * **timeout 5s {command}** - odpala komendę przez 5 sekund (s, m, h, d)
-  * **-k** - wymusza zabicie procesu po określonym czasie
 * **timeout 8s tail -f {plik}** - tail na pliku przez 8 sekund
+  * **-k** - wymusza zabicie procesu po określonym czasie
 * **timelimit -t10 tail -f {plik}** - j/w ale przez 10 sekund
 
 ---
@@ -399,10 +409,9 @@
 * **nethogs"** - pokazuje zużycie sieci i transfery do konkretnych hostów
 * **ip route get 8.8.8.8 | awk '{print $NF; exit}'** - pokazuje ip komputera wewnątrz sieci
 * **hostname --ip-address** - lokalne ip komputera
-* **nmap -sn {ip}/24** - skanuje adresy w poszukiwaniu hostów (/24,16,8 - mask adresu np /16 -> 127.0.x.x, 24 -> 127.0.0.x)
+* **nmap -sn {ip}/24** - skanuje adresy w poszukiwaniu działających ip (/24,16,8 - mask adresu np /16 -> 127.0.x.x, 24 -> 127.0.0.x)
 * **nmap {hostname}** - pokazuje otwarte porty i serwisy na podanym hoście
   * **nmap -p 1-1000 {hostname}** - pokazuje otwarte porty i serwisy na podanym hoście od 1 do 1000
-  * **nmap -sn 192.168.0.0/24** - skanuje w poszukiwaniu działających ip
   * **arp-scan 192.168.0.0/24** - j/w
 * **hostname -I** - pokazuje lokalne ip komputera
 * **hostname -f** - nazwa hosta (długa, -s - krótka)
@@ -558,7 +567,7 @@
 * **awk '{print $4/$2}'** - wyświetla parameter 4 i 2 z wejścia podzielone przez siebie (oddzielone spacja) ($NF - liczba pol, $NR - liczba rekordów)
 * **awk 'BEGIN{for(i=32;i<128;i++)printf "%c",i}'** - wyświetla listę znaków (32-128)
 * **awk -F'/' '{print $3}'** - dzieli input względem znaku `/` i wyświetla 3 element
-* **awk '{s+=$1} END {print s}** - 
+* **awk '{s+=$1} END {print s}** -
 * **awk '{gsub(/{pattern}/,"{replace}")}' {plik}** - Szuka i zastępuje wszystkie wzorce znalezione w pliku
   * **awk '{gsub(/[0-9]+\.216\.104\.10/,"10.216.104.1")}' php.ini**
 * **sed -n '44,92p' {plik}** - pokazuje linie 44-92 z pliku (samo 92p - 92 linia)
@@ -639,9 +648,9 @@
 
 ## Suse
 * **cat /var/log/boot.log** - 2
-* **tail -30 /var/log/messages** - 
-* **tail -30 /var/log/messages | awk '{print $3,$5,$6,$7,$8,$9,$10}'** - 
-* **zypper search -s {openssh}** - szuka pakietu z poprzednimi wersjami 
+* **tail -30 /var/log/messages** -
+* **tail -30 /var/log/messages | awk '{print $3,$5,$6,$7,$8,$9,$10}'** -
+* **zypper search -s {openssh}** - szuka pakietu z poprzednimi wersjami
 * **sudo zypper install --oldpackage {openssh-7.6p1-lp150.7.4}** - zainstalowanie starszej wersji pakietu
 * **zypper list-updates** - lista dostępnych updatów
 * **zypper dup** - pełen upgrade
@@ -655,7 +664,21 @@
 * **zypper clean** - czyści cache
 * **cat /var/log/zypp/history** - logi zyppera
 * **zypper dist-upgrade** - upgrade całej dystrybucji
- 
+
 ## MacOS
+* **diskutil list** - lista urządzeń blokowych
+sudo diskutil unmountDisk
+sudo diskutil unmount
+sudo diskutil eject
+* **sudo launchctl** - zarządzanie demonami
+  * **stop {nazwa}** - zatrzymuje
+  * **remove {nazwa}** - zatrzymuje
+  * **disable {nazwa}** - zatrzymuje
+  * **stop {nazwa}** - zatrzymuje
+  * **limit maxfiles 65536 unlimited**
+  * **load -w /Library/LaunchDaemons/limit.maxfiles.plist** - (unload)
+  * **list** - pełna lista demonów systemowych
+  * **restart {nazwa}** -
+  * **runstatus {nazwa}** -
 
 ---
