@@ -36,7 +36,7 @@
 * **git reset --merge ORIG_HEAD** - resetuje zmiany z ostatniego merg-a
 * **git checkout -- {plik}** - przywraca oryginalny plik
 * **git checkout {commit} -- {plik}** - przywraca stan pliku ze wskazanego commita
-* **git ls-files** - lista plików z ich ścierzkami w repo (-md + zmodyfikowane i usunięte)
+* **git ls-files** - lista plików z ich ścieżkami w repo (-md + zmodyfikowane i usunięte)
 * **git rm {plik}** - kasuje z repo plik
 * **git rm --cached (plik/katalog)** - usuwa plik/katalog z repozytorium, pozostawiając go na dysku
   **-r** - dla całych katalogów
@@ -64,7 +64,7 @@
 * **git shortlog** - lista commitów użytkowników
 * **git shortlog -s -n** - lista użytkowników repozytorium
 * **git llog --after=2016-08-16 --before=2016-08-30** - commity z podanego zakresu (--until starsze od podanej daty, --since z pred podanej daty)
-* **git log --name-status** - podaje statuz zmian przy nazwie pliku (add, mod, delete)
+* **git log --name-status** - podaje status zmian przy nazwie pliku (add, mod, delete)
 * **git log --stat** - + statystyki zmian w plikach (--shortstat bez ++++---)
 * **git log {commit1}..{commit} --no-merges** - pokazuje zmiany pomiędzy 2 commitami bez info o mergach
 * **git log -- {plik/katalog}** - log dla pojedyńczego pliku lub wszystkich plików z katalogu
@@ -123,14 +123,14 @@
 * **git show --name-only {commit}** - pokazuje tylko listę zmodyfikowanych plików z commita
 * **git show {commit}** - pokazuje zmiany w commicie
 * **git show HEAD:{plik}** - pokazuje zmiany tylko w konkretnym pliku
-* **git show {commit} --name-only -p -5** - pokazuje 5 poprzednich comitów od podanego
+* **git show {commit} --name-only -p -5** - pokazuje 5 poprzednich commitów od podanego
   * **--color-words** - pokaże bez +/-
 
 ## branch
 
 * **git branch** - lista gałęzi w repozytorium
 * **git branch -a** - pokazuje listę wszystkich gałęzi (łącznie z tymi z repo, same z repo `-r`)
-  * **-r** - tylko gałęzie zdalne
+* **git branch -r** - tylko gałęzie zdalne
 * **git branch -d {nazwa gałęzi}** - usuwa wskazaną gałąź
 * **git branch --merged** - lista zmergowanych branchy
 * **git branch --merged | git branch -d** - kasuje wszystkie zmergowane branche
