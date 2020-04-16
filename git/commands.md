@@ -5,7 +5,7 @@
 * **git init** - inicjalizuje repozytorium GIT w katalogu
 * **git clone {adres repozytorium}** - klonuje repozytorium do katalogu
 * **git status** - pokazuje status repozytorium (pokazuje informację o zmodyfikowanych, nowych, usuniętych oraz nie należące do repozytorium plikach)
-* **git add {ścierzka do pliku}** - dodaje plik do repozytorium (np. `git add folder/plik.php`)
+* **git add {ścieżka do pliku}** - dodaje plik do repozytorium (np. `git add folder/plik.php`)
 * **git add -A** - dodaje wszystkie nie należące do repozytorium pliki
 * **git config --global color.ui auto** - włącza koloryzowanie wyników w konsoli
 * **git config --global core.pager '{nazwa}'** - ustawia program do przeglądania logów (brak w konsoli)
