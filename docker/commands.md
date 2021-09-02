@@ -56,4 +56,4 @@
 * **screen ~/Library/Containers/com.docker.docker/Data/vms/0/tty** - dostęp do virtualki z dockerem na macku
   * **Ctrl+a d** - wyjście
 * **docker rm $(docker ps -a -q)** - kasuje wszystkie kontenery
-* **docker rm $(docker volume ls -q)** - kasuje wszystkie volumeny
+* **docker volume rm $(docker volume list -q)** - kasuje wszystkie volumeny
