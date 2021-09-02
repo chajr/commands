@@ -12,6 +12,10 @@
 * __du -sh .[!.]*__ - jak powyżej
 * __du -hs .[^.]*__ - pokazuje rozmiar wszystkich ukrytych plików
 * **du -ah** - pokazuje zajętość wszystkich plików w katalogu
+  * **-c** - podsumowanie na końcu
+  * **--max-depth=1** - maksymalne zagnieżdżenie
+  * **-d1** - maksymalne zagnieżdżenie
+  * **--exclude="{nazwa}"** - bez
 * __ls -ld .*__ - wyświetla wszystkie ukryte pliki i katalogi
 * **ls -li /etc | sort -n** - sortuje listę plików względem ich węzłów
 * **df -h** - pokazuje zajętość wszystkich dysków
@@ -31,7 +35,7 @@
 * **ls | wc -l** - liczba plików i katalogów w aktualnym katalogu
 * **tree** - drzewo katalogów i plików
 * **tree -ugphD** - drzewo katalogów i plików wraz z informacjami o plikach i katalogach
-* **find -iname {nazwa pliku}** - szuka podanego pliku bez uwzględnienia wielkości liter
+* **find {ścieżka} -iname {nazwa pliku}** - szuka podanego pliku bez uwzględnienia wielkości liter
 * **find {ścieżka} -regex {regex}** - szuka podanego pliku używając wyrażeń regularnych
   * **-regex {regex}** - sprawdza ścieżkę pod względem regex
   * **-iregex {regex}** - to samo ale bez uwzględniania wielkości liter
@@ -46,6 +50,7 @@
   * **p** - plik fifo (named pipe)
   * **l** - link
   * **s** - socket
+  * **L** - sprawdza plik a nie link
   * **-user** - użytkownik (-group)
   * **-atime -mtime -ctime** - czasy modyfikacjo, dostępu etc
 * **find {dir} -type f -mtime +10d -exec rm {} \;** - kasuje pliki starsze niż 10 dni (rm {} - nawiasy zastępowane nazwą pliku)
@@ -73,6 +78,8 @@
   * **exa -1**
 * **basename {pełna ścieżka do pliku}** - zwraca nazwę pliku z podanej ścieżki
   * **{ścieżka} {rozszerzenie}** - zwraca tylko nazwę pliku bez rozszerzenia
+* **dirname {plik}** - zwraca ścieżkę do pliku
+* **umask xxx** - ustawia domyślne uprawnienia dla nowych plików
 
 ### Pliki
 * **cat {plik 1} {plik 2} {plik n} >> {plik docelowy}** - dodaje content z plików 1, 2 i 3 do pliku docelowego
@@ -94,11 +101,16 @@
 * **less {plik} | grep "wyrażenie regularne"** - szuka w wybranym pliku podanej wartości
 * **tail -f {nazwa pliku}** - pokazuje zmiany na żywo w podanym pliku
 * **tail -2 {plik}** - wyświetla 2 ostatnie linie w pliku
+  * **-c5** - 5 ostatnich bajtów
 * **stat {nawza pliku}** - rozszerzone informacje o pliku
+  * **-f** - status systemowy
+  * **--printf='%U\n%G\n%C\n%z\n'** - zmiana formatu (%U – user name of owner %G – group name of owner %C – SELinux security context string %z – time of last status change, human-readable %n – shows the file name %a – print free blocks available to non-superuser %b – outputs total data blocks in file system)
 * **file {nazwa pliku}** - pokazuje typ pliku i kodowanie
   * **-i** - uproszczona informacja
+  * **-f {plik źródłowy}** - informacje o plikach z pliku źródłowego
+  * **-z {plik}** - ze skompresowanego pliku
 * **head -2 {plik}** - pokazuje 2 wiersze z podanego pliku
-* **head -c5 {plik}** - wyświetli 5 pierwszych liter
+* **head -c5 {plik}** - wyświetli 5 pierwszych bajtów
 * **md5sum {plik}** - oblicza sumę md5
 * **sha1sum {plik}** oblicza sumę sha1
 * **wc -l {plik}** - liczba linii w pliku
@@ -112,12 +124,15 @@
 * **grep --include={plik} -A 1 -rn {ścieżka} -e {wzorzec}** - szuka wzorca w ścieżce i podanym pliku, wyświetla ścieżkę, numer linii + linia poniżej znalezionej
 * **grep -o {wzorzec} {plik} | sort --unique | wc -l** - ilość unikalnych wystąpień wzorca
 * **grep -o {wzorzec} {plik} | sort | uniq -c** - pokazuje posortowane wzorce + ilość ich wystąpień
+* **grep -o -P '.{0,3}string.{0,4}'** - 
 * **grep -rcw** - szuka rekursywnie wzorca w postaci całych słów i wyświetla tylko ilość znalezionych
   * **-E** - rozszerzony regexp
   * **-h** - bez nazw plików
-  * **-l** - pokazuje tylko nazwy plikÓw z wzorcem
-  * **-L** - pokazuje tylko nazwy plikÓw bez wzorca
+  * **-l** - pokazuje tylko nazwy plików z wzorcem
+  * **-L** - pokazuje tylko nazwy plików bez wzorca
+  * **-i** - bez sprawdzania wielkości liter
   * **-o** - tylko dopasowany wzorzec
+  * **-P** - perl regexp
 * **diff {plik1} {plik2}** - porównuje ze sobą 2 pliki
   * **-y** - pokazuje w kolumnach (2 pliki, 2 kolumny)
   * **-a** - traktuja jako tekst
@@ -151,6 +166,9 @@
 * **find {katalog} -type f -exec du -sh {} + | sort -rh | head -n 5** - znajduje 5 największych plików w katalogu
   * **... -type f -printf "%s %p\n" ...**
 * **expand -t 4 {input} > {output}** - zmienia taby na 4 spacje w pliku input i zapisuje do output (-i - tylko początkowe taby)
+* **bat** - rozszerzona wersja cat-a
+  * **A** - pokazuje niedrukowane znaki
+  * **** - 
 
 ### Media
 * **identify -format '%Q' {plik}** - zwraca informacje na temat kompresji
@@ -174,6 +192,7 @@
 * **tar -xvzf {nazwa pliku}** - rozpakowuje archiwum `*.tar.gz`
 * **tar -cvzf {nazwa archiwum} {nazwa pliku/katalogu}** - archiwizuje wskazany plik/katalog do podanego pliku jako `tar.gz`
 * **tar -tvf {nazwa archiwum}** - lista zarchiwizowanych elementów
+  * **-cvf** - bez kompresji
 * **gzip {nazwa}** - kompresuje pliki jako `.gz`
 * **gunzip {nazwa}** - rozpakowuje archiwum `*.gz`
 * **zip -r0 {plik.zip} {katalog}** - zapisuje zawartość katalogu do pliku `zip` bez kompresji
@@ -202,18 +221,20 @@
 * **adduser {user} {grupa}** - dodaje nowego użytkownika
 * **userdel {nazwa}** - usuwa użytkownika
 * **addgroup {nazwa}** - dodaje grupę
+* **groupadd {nazwa}** - dodaje grupę
 * **groupdel {nazwa}** - usuwa grupę
 * **sudo runuser -l {nazwa użytkownika} -c '{polecenie}'** - uruchamia poprzez innego użytkownika {polecenie}
 * **sudo su - {nazwa użytkownika} -c "{polecenie}"** - jak powyżej
 * **su - {user}** - przełącza usera
 * **usermod** - modyfikuje ustawienia użytkownika
-  * ** -u {id} {user}** - zmienia id usera
-  * ** -a -G {grupa} {user}** - dodaje usera do grupy
+  * **-u {id} {user}** - zmienia id usera
+  * **-aG {grupa} {user}** - dodaje usera do grupy
   * **-L** - blokuje użytkownika
   * **-U** - odblokowuje użytkownika
   * **--expiredate 1970-01-02** - data wygaśnięcia hasła
+  * **-d {dir}** - ustawia katalog dla użytkownika
 * **gpasswd -a {user} {grupa}** - dodaje usera do grupy
-* **htpasswd {user} {pass}** - tworzy plik htpasswd (-c nowy plik o wskazanej nazwie)
+* **htpasswd {user} {pass}** - tworzy plik htpasswd (-c nowy plik o wskazanej nazwie)*-+++++++++++++++++++++++++++++++++
 * **groupmod -g {id} {grupa}** - zmienia id grupy
 * **find / -group {id} -exec chgrp -h {user} {} \ || true** - szuka plikw z podanym id usera i zmienia im usera;
 * **find / -user {id} -exec chown -h {grupa} {} \ || true** - szuka plikw z podanym id grupy i zmienia im grupę;
@@ -247,7 +268,7 @@
 * **init 0** - zabija cały system
 * **uptime -p && uptime -s** - pokazuje czas pracy systemu, oraz datę uruchomienia
 * **getconf LONG_BIT** lub **arch** pokazuje architekturę systemu
-* **dstat** - listat statystyk systemowych
+* **dstat** - lista statystyk systemowych
 * **free** pokazuje ilość dostępnej pamięci
 * **hostname** - pokazuje nazwę komputera w sieci
 * **who -r** - pokazuje czas uruchomienia systemu oraz jego poziom
@@ -343,6 +364,7 @@
 * **sudo update-rc.d {skrypt w init.d} defaults** - dodaje skrypt do autostartu na domyślnym poziomie
 * **sudo lsof** - pokazuje otwarte pliki i procesy ich używające
 * **ps -Af --no-headers | wc -l** - liczba uruchomionych procesów
+  * **-ef --forest** - pokazuje drzewo zależności
 * **ps u** - pokazuje polecenia uruchomione w konsolach
 * **ps aux | head -1 && ps aux | grep {program}** - szuka podanego programu, wraz z opisem kolumn z wyniku
 * **ps aux | grep {nazwa}** - szuka procesów o podanym wyrażeniu
@@ -365,18 +387,26 @@
 * **pgrep {program}** - zwraca id procesu dla podanej nazwy programu
 * **renice {numer} {pid}** - zmienia priorytet procesu o podanym id, im niższy tym wyższy priorytet (np -19, default: 0)
 * **pkill {program}** - zabija podany program
+* **pkill {program}** - zabija podany program
   * **-p $(pgrep {program})** - dla podanego programu
 * **xkill** - umożliwia zabijanie okienkowych procesów, należy wskazać kursorem proces do zabicia
 * **pidstat -hruvp {pid1}{pid2} 5** - monitoruje 2 procesy i pokazuje co 5s
 * **pmap -x {proces id}** - podaje szczegółowe informacje na temat zużycia pamięci przez proces i jego zależności
 * **ps --no-headers -o "rss,cmd" -C {nazwa procesu} | awk '{ sum+=$1 } END { printf ("%d%s\n", sum/NR/1024,"Mb") }'** - sumaryczne zużycie pamięci dla procesu
-* **timeout 5s {command}** - odpala komendę przez 5 sekund (s, m, h, d)
+* **timeout 5s {command}** - odpala komendę przez 5 sekund (s, m, h, d) (SIGTERM)
 * **timeout 8s tail -f {plik}** - tail na pliku przez 8 sekund
+  * **-s SIGKILL 3 {command}** - 
+  * **-s 9 3 {command}** - 
   * **-k** - wymusza zabicie procesu po określonym czasie
+  * **-k 3 5 {command}** - 
 * **timelimit -t10 tail -f {plik}** - j/w ale przez 10 sekund
 
 ---
 
+ssh -L
+vulcain proxy
+http2 push
+poczytać o tls
 ## Internet i sieć
 * **curl ifconfig.me** - pokazuje zewnętrzne ip komputera
 * **wget http://ipinfo.io/ip -qO -** - pokazuje zewnętrzne ip komputera
@@ -387,6 +417,7 @@
 * **ifconfig {nazwa sieci} {ip} netmask {maska}** - ustawia ip i maskę dla sieci, po restarcie ustawienia znikają
 * **ifup {nazwa sieci}** - uruchamia sieć (ifdown - wyłącza)
 * **ssh-keygen** - generuje nowy klucz ssh
+* **ssh-keygen -l -v -f ~/.ssh/id_rsa.pub** - zwraca skrót (sha256) klucza publicznego
 * **mtr {ip lub domena}** - połączenie ping i traceroute
 * **traceroute {ip}** - pokazuje listę punktów przez które idzie połączenie
 * **route** - pokazuje tablicę routingu
@@ -397,14 +428,13 @@
 * **netstat** - wyświetla listę aktywnych połączeń TCP i UDP
 * **netstat -at** - lista portów TCP
 * **netstat -ai** - statystyki interfejsów sieciowych
-* **netstat -nr** - tablica routingu
 * **netstat -ant** - pokazuje połączenia sieciowe
 * **netstat -nr | awk '{ if ($1 ~/default/) { print $6} }'** - nazwa aktualnie używanej sieci
 * **netstat -anp tcp | grep -i "listen"** - pokazuje nasłuchiwane połączenia tcp
 * **netstat -nr** - pokazuje tablicę routingu
 * **netstat -tuln** - lista otwartych połączeń
  * **netstat -tulnp tcp** - tylko tcp
-* **sudo lsof -i -P -n | grep LISTEN** - lista otwartych portów i procesów ich nasłuchujących
+* **sudo adduse -i -P -n | grep LISTEN** - lista otwartych portów i procesów ich nasłuchujących
 * **sudo lsof -i -nP** - pokazuje używane porty oraz powiązane z nimi procesy
 * **nethogs"** - pokazuje zużycie sieci i transfery do konkretnych hostów
 * **ip route get 8.8.8.8 | awk '{print $NF; exit}'** - pokazuje ip komputera wewnątrz sieci
@@ -440,6 +470,7 @@
   * **-u {username:password}** - logowanie przez basic http authorization
   * **-C - -O** - wznawia przerwane pobieranie
   * **-x {adres serwera proxy}** - łączy przez proxy
+  * **-f** - wycisza błąd HTTP
   * **--user-agent {nazwa}** - ustawia user agenta (no opera zamiast curl)
   * **--cookie-jar {plik dla cookie} {adres} -O** - zapisuje ciasteczka pobrane ze strony
   * **--cookie {plik cookie} {adres}** - wysyła cookie
@@ -461,7 +492,7 @@
 * **ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}'** - j/w
 * __ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'__ - j/w
 * __ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'__ - j/w
-* **nc {ip} {port}** - ustawa połączenie tcp & udp z serwerem
+* **nc {ip} {port}** - ustawia połączenie tcp & udp z serwerem
 * **nc -z -v 127.0.0.1 1-1000** - skanowanie portów od 1 do 1000
   * **nc -z 127.0.0.1 1-100** - tylko te z którymi udało się połączyć
   * **nc -z -n -v 127.0.0.1 1-1000 2>&1 | grep succeeded** - j/w
@@ -478,8 +509,10 @@
 * **swaks --to {mail docelowy} --server {serwer mailingowy}:{port} --body "{treść}" --header "{temat}"** - wysyła prostego maila
 * **host {domena}** - podaje IP domeny
   * **host -t CNAME {domena}** podaje wpisy CNAME domeny (CNAME, NS, MX, SOA)
-* **arp -e** - zwraca tablicę ARP (Address Resolution Protocol)
-* **iwconfig** - ustawia sieć wifi
+* **arp -e** - zwraca tablicę ARP (Address Resolution Protocol)
+* **iwconfig** - ustawia sieć wifi
+* **iptraf** - monitoring sieci LAN
+* **iftop** - monitoring sieci
 
 ---
 
@@ -487,6 +520,7 @@
 * **reset** - inicjalizuje ponownie konsolę
 * **clear** - czyści wpisy w konsoli
 * **which {nazwa polecenia}** - podaje ścieżkę do polecenia
+  * **-a** - pokazuje wszystkie znalezione ścieżki
 * **whereis {nazwa polecenia}** - podaje ścieżkę do polecenia, źródeł binarnych, bibliotek i pakietów
 * **alias fuck='sudo $(history -p \!\!)'** - fuck command
 * **alias fuck='sudo $(fc -ln -1)'** - fuck command 2
@@ -537,6 +571,14 @@
 * **multitail -l 'ssh user@host "tail -f /var/log/log.log"' -l 'ssh user@host2 "tail -f /var/log/log.log"'** - podgląd logów z 2 serwerów na raz
 * **echo -n "Hello" | od -A n -t x1** - wyświetla tekst jako wartości hex
 * **echo -n "Hello" | hd** - wyświetla tekst jako wartości hex + oryginalny string (hd, xxd)
+* **echo -e "text"** - interpretuje sekwencje ucieczki (np \n jako nową linię, \t jako tabulator) 
+  * **-n** - do not print the trailing newline.
+  * **\b** - backspace
+  * **\\** - backslash
+  * **\n** - new line
+  * **\r** - carriage return
+  * **\t** - horizontal tab
+  * **\v** - vertical tab
 * **od {opcja} {plik}** - wyświetla zawartość pliku jako wartości danego znaku
   * **-c** - pokazuje znaki niedrukowane
   * **-x** - jako wartości hex
@@ -560,6 +602,7 @@
 * **grep -r -P '[^\x00-\x7f]' {plik}** - wyszukuje znaki unicode w pliku
 * **openssl passwd -apr1** - generuje hash hasła
   * **openssl rand -hex {długość}** - generuje hasło o podanej długości (*2)
+* **mytop** - 
 
 ---
 
@@ -579,6 +622,7 @@
   * **-s** - tnie od tyłu
   * **--output-delimiter="--"** - ustawiam symbol do rozdzielenia
 * **sed -i '1s/^/{string}\n/' {plik}** - dodaje string na początek pliku
+* **sed '1702,1730d' {plik 2} > {plik 1}** - kasuje podane linie z pliku
 * **tr ':' '\n'** - zamienia podany znak na inny, tu : na nową linię
   * **tr 'a-z' 'A-Z'** - zamienia litery na duże
   * **tr -d ‘is’** - kasuje wyrażenie
@@ -599,7 +643,8 @@
 * **{command} 1>> {file|program}** - Redirect and append stdout to file or program
 * **{command} 2> {file|program}** - Redirect stderr to file or program
 * **{command} 2>> {file|program}** - Redirect and append stderr to file or program (to samo co {command} >> {plik} 2>&1)
-* **{command} &> {file|program}** - Redirect both stdout and stderr to file or program
+* **{command} &>> {file|program}** - Redirect both stdout and stderr to file or program
+* **{command} >> {file|program} 2>&1** - Redirect both stdout and stderr to file or program
 * **{command} 2>&1** - Redirect stderr to stdout
 * **{command} > /dev/null 2>&1** - Redirect whole output to /dev/null
 * **{command} &> /dev/null** - Redirect whole output to /dev/null
@@ -645,6 +690,7 @@
 ## Ubuntu
 * **sudo dpkg -i --force-overwrite {*.deb}** - wymusza uruchomienie pakietu
 * **sudo apt -f --fix-broken install** - naprawia zależności
+* **apt install ubuntu-restricted-extras laptop-mode-tools** - kodeki i drivery dla laptopa
 
 ## Suse
 * **cat /var/log/boot.log** - 2
@@ -670,6 +716,7 @@
 sudo diskutil unmountDisk
 sudo diskutil unmount
 sudo diskutil eject
+sudo diskutil unmount force /Users/chajr/mount
 * **sudo launchctl** - zarządzanie demonami
   * **stop {nazwa}** - zatrzymuje
   * **remove {nazwa}** - zatrzymuje
@@ -681,4 +728,6 @@ sudo diskutil eject
   * **restart {nazwa}** -
   * **runstatus {nazwa}** -
 
+
 ---
+
