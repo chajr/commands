@@ -28,6 +28,10 @@
 * **docker update {name} --restart always** - aktualizuje kontener i ustawia uruchamiania po każdym restarcie (`no` - wyłącza restart)
 * **docker run -it --name {nazwa kontenera} --rm --entrypoint /bin/bash {skrypt}** - ustawiamy własny entrypoint
 * **docker exec -i {nazwa kontenera} mysql -u {login} -p{hasło} {tabela} <<< "polecenie sql"** - bezpośrednie podanie polecenia sql do kontenera
+* **nohup docker exec -i {kontener} {polecenie} > {log} 2>&1 & echo $! > {pid}** - uruchamia proces w kontenerze, tak aby działał w tle i zapisuje id procesu do pliku
+* **docker volume ls** - lista volumenów
+* **docker volume rm {nazwa}** - kasowanie volumenów
+* **docker system prune** - 
 
 ### Docker compose commands
 
@@ -39,6 +43,9 @@
 
 ### Some useful commands usage
 
+* **docker cp {plik} {kontener}:{docelowa ścierzka}** - kopiuje plik do kontenera
+* **docker cp {kontener}:{plik} {docelowa ścierzka}** - kopiuje plik z kontenera
+  * **-a** - zachowuje atrybuty
 * **docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")** - remove broken images
 * **docker rmi $(docker images --filter "dangling=true" -q --no-trunc)** - remove unused images
 * __docker exec -it {container} mysql -u root --password=* -e "CREATE USER '{user_name}'@'%' IDENTIFIED BY '{pass};"__
@@ -48,3 +55,5 @@
 
 * **screen ~/Library/Containers/com.docker.docker/Data/vms/0/tty** - dostęp do virtualki z dockerem na macku
   * **Ctrl+a d** - wyjście
+* **docker rm $(docker ps -a -q)** - kasuje wszystkie kontenery
+* **docker rm $(docker volume ls -q)** - kasuje wszystkie volumeny
