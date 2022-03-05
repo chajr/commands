@@ -4,8 +4,8 @@
 * **pwd** - aktualny katalog
 * **ls -la** - listuje wszystkie dostępne pliki
 * **ls -lat** - listuje wszystkie dostępne pliki posortowane według czasu modyfikacji
-* **cp -r {nazwa pliku/katalogu} {miejsce docelowe}** - kopiuje plik lub cały katalog z zawartością we wskazane miejsce
-* **mv {nazwa pliku/katalogu} {miejsce docelowe}** - przenosi plik lub cały katalog z zawartością we wskazane miejsce (jeśli lokalizacja pliku docelowego jest taka sama jak pliku do przeniesienia, zmienia nazwę)
+* **cp -r {nazwa pliku/katalogu} {miejsce docelowe}** - kopiuje plik lub cały katalog z zawartością we wskazane miejsce
+* **mv {nazwa pliku/katalogu} {miejsce docelowe}** - przenosi plik lub cały katalog z zawartością we wskazane miejsce (jeśli lokalizacja pliku docelowego jest taka sama jak pliku do przeniesienia, zmienia nazwę)
 * **du -sh** - pokazuje zajętość całego katalogu
 * __du -sh *__ - pokazuje rozmiar poszczególnych plików i katalogów
 * __du -sh \`ls -A\`__ - pokazuje rozmiar wszystkich (w tym ukrytych) plików i katalogów (można też użyć `$(ls -A)`)
@@ -38,12 +38,13 @@
 * **tree -ugphD** - drzewo katalogów i plików wraz z informacjami o plikach i katalogach
 * **find {ścieżka} -iname {nazwa pliku}** - szuka podanego pliku bez uwzględnienia wielkości liter
 * **find {ścieżka} -regex {regex}** - szuka podanego pliku używając wyrażeń regularnych
-  * **-regex {regex}** - sprawdza ścieżkę pod względem regex
+  * **-regex {regex}** - sprawdza ścieżkę pod względem regex
   * **-iregex {regex}** - to samo ale bez uwzględniania wielkości liter
 * **find -E {ścieżka} -regex {regex}** - szuka podanego pliku używając rozszerzonych wyrażeń regularnych
 * **find -size +100M** - szuka plików powyżej 100mb
 * **find / {pattern}** - wyszukuja podanego wzorca w głównym katalogu i podkatalogach
 * __find . -maxdepth 1 -name '*.json' -delete__ - usuwa dużą ilość plików z rozszerzeniem `*.json`
+* **find . -name "_*" -mtime +14 -exec /bin/rm -f {}** - kasuje pliki starsze niż 14 dni
 * **find . -type f -ctime -2 -print0** - pokazuje pliki utworzone w ciągu 2 dni i wyświetla jako linia (+1 starsze niz 2 dni)
   * **f** - plik
   * **d** - katalog
@@ -55,14 +56,15 @@
   * **-user** - użytkownik (-group)
   * **-atime -mtime -ctime** - czasy modyfikacjo, dostępu etc
 * **find {dir} -type f -mtime +10 -exec rm {} \;** - kasuje pliki starsze niż 10 dni (rm {} - nawiasy zastępowane nazwą pliku)
-* **find {katalog}/ -size +1G -exec bash -c "ls -lh '{}'" \;** - wyszukuje pliki większe niż 1GB i listuje je w outpucie
+* **find . -cmin -5** - znajduje pliki utworzone w przeciągu 5 min
+* **find {katalog}/ -size +1G -exec bash -c "ls -lh '{}'" \;** - wyszukuje pliki większe niż 1GB i listuje je w outpucie
 * **find {dir} -type d -exec sh -c '{program} $0/*' {} \; - wykonuje program dla wszystkich plików w katalogu
   * **-ok rm {} \;** - pyta czy usunąć plik
   * **find . -inum {węzeł} -ok rm {} \;** - kasowanie pliku z uszkodzoną nazwą (`ls -i` - zwróci numer węzła pliku)
   * **find / –perm –4000** - znajduje pliki z ustawionym _setuid_
 * **find . -type l ! -exec test -e {} \; -print** - wyszukuje zepsute symlinki
   * **find . -type l ! -exec test -e {} \; -print0 | xargs -0 rm** - wyszukuje i automatycznie kasuje zepsute symlinki
-* **cksum {nazwa pliku}** - pokazuje sumę kontrolną CRC i rozmiar pliku
+* **cksum {nazwa pliku}** - pokazuje sumę kontrolną CRC i rozmiar pliku
 * **ln -s {cel} {nazwa}** - tworzy link do pliku lub katalogu
 * **"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"** - zwraca ścieżkę w której znajduje się uruchomiony skrypt
 * **ls -R | sort -R | tail -1** - wybiera losowy katalog lub plik z drzewa katalogu
@@ -79,7 +81,7 @@
   * **exa -1**
 * **basename {pełna ścieżka do pliku}** - zwraca nazwę pliku z podanej ścieżki
   * **{ścieżka} {rozszerzenie}** - zwraca tylko nazwę pliku bez rozszerzenia
-* **dirname {plik}** - zwraca ścieżkę do pliku
+* **dirname {plik}** - zwraca ścieżkę do pliku
 * **umask xxx** - ustawia domyślne uprawnienia dla nowych plików
 
 ### Pliki
@@ -91,7 +93,7 @@
   * **split -`expr \`wc -l {plik} | awk '{print $1}'\` /$k` {plik} {prefix}** - dzieli plik na $k równych części
   * **csplit -k {plik} 100 {99}** - dzieli plik na części po 100 linii (ostatnia może być dłuższa)
 * **nl {nazwa pliku}** - pokazuje zawartość pliku wraz numerami linii
-* **dd** - kopiowanie pliku wraz z konwersją typu (dd if=/home/user/Downloads/debian.iso of=/dev/sdb1 bs=512M; sync)
+* **dd** - kopiowanie pliku wraz z konwersją typu (dd if=/home/user/Downloads/debian.iso of=/dev/sdb1 bs=512M; sync)
 * **dd id=/dev/device of=~/device.img** - kopiuje każdy bajt z urządzenia device do pliku
   * **conv=noerror,syn** - uszkodzone dane zastępuje nullem
 * **rm {nazwa pliku}** - kasuje plik
@@ -112,7 +114,7 @@
   * **-z {plik}** - ze skompresowanego pliku
 * **head -2 {plik}** - pokazuje 2 wiersze z podanego pliku
 * **head -c5 {plik}** - wyświetli 5 pierwszych bajtów
-* **md5sum {plik}** - oblicza sumę md5
+* **md5sum {plik}** - oblicza sumę md5
 * **sha1sum {plik}** oblicza sumę sha1
 * **wc -l {plik}** - liczba linii w pliku
 * **find . -type f | wc -l** - liczba samych plików w katalogu
@@ -151,15 +153,15 @@
 * **locate {file}** - znajduje wszystkie pliki o podanej nazwie
   * **-i** - ignoruje wielkość znaków
   * **-r {expression}** - szuka używając regex
-* **cmp {plik1} {plik2}** - pokazuje różnicę między plikami
+* **cmp {plik1} {plik2}** - pokazuje różnicę między plikami
 * **cmp --verbose {pliki}** - pokazuje kody różnic (bajt różnicy, kod znaku 1, kod znaku 2)
 * **cmp -bl <(sed -n '1p' {plik}) <(sed -n '1p' {plik})** - porównuje pierwsze linie z plików
 * **lsof** - pokazuje wszystkie otwarte pliki
   * **lsof -p {pid}** - pliki otwarte przez podany proces
-* **fdupes -rnS {dir} >> duplicated** - znajduje i zapisuje do pliku listę zduplikowanych plików
+* **fdupes -rnS {dir} >> duplicated** - znajduje i zapisuje do pliku listę zduplikowanych plików
 * **qemu-img convert -f raw -O qcow2 image.img image.qcow2** - konwertuje pliki obrazów (np VM)
 * **foremost -v -i {image} -o {out}** - odzyskiwanie skasowanych plików z obrazu do katalogu out
-* **flock -xn {test.lock} -c "{script}"** - uruchamia skrypt i ustawia locka na pliku {test.lock}, do zakończenia nie da się ponownie uruchomić
+* **flock -xn {test.lock} -c "{script}"** - uruchamia skrypt i ustawia locka na pliku {test.lock}, do zakończenia nie da się ponownie uruchomić
 * **echo '{string}' | cat - {plik} > temp && mv temp {plik}** - dodaje string na początek pliku
 * **cat << EOF > {plik}** - uruchamia wpisywanie danych do pliku, linie oddzielone enterem
   * **EOF** - kończy wpisywanie do pliku
@@ -201,7 +203,7 @@
 ---
 
 ## Użytkownicy
-* **last** - pokazuje listę ostatnich logowań użytkowników (-n {liczba})
+* **last** - pokazuje listę ostatnich logowań użytkowników (-n {liczba})
 * **whoami** - podaje nazwę aktualnego użytkownika
 * **users** - zalogowani użytkownicy
 * **users | wc -w** - liczba zalogowanych użytkowników
@@ -211,6 +213,7 @@
   * **-G** - wszystkie grupy usera
 * **sudo su - {nazwa użytkownika}** - przełącza na konto innego użytkownika
 * **groups** - pokazuje grupy do których należy użytkownik
+* **groups {user}** - pokazuje grupy do których należy podany użytkownik
 * **w** - pokazuje kto jest zalogowany i co robi
 * **who** - pokazuje kto jest zalogowany
 * **wall {wiadomość}** - wysyła wiadomość do użytkowników
@@ -220,6 +223,8 @@
   * **-l** - blokuje użytkownika
   * **-u** - odblokowuje użytkownika
 * **adduser {user} {grupa}** - dodaje nowego użytkownika
+* **useradd {user}** - dodaje nowego użytkownika
+* **useradd -g {grupa} -G {dodanie do grupy} -u {id} {nazwa}** - dodaje usera i grupę, ze wskazanym id usera
 * **userdel {nazwa}** - usuwa użytkownika
 * **addgroup {nazwa}** - dodaje grupę
 * **groupadd {nazwa}** - dodaje grupę
@@ -246,7 +251,7 @@
 ---
 ## Data i czas
 * **cal** - pokazuje kalendarz aktualnego miesiąca
-* **date** - pokazuje aktualną datę
+* **date** - pokazuje aktualną datę
 * **date +"%T : %Y"** - pokazuje datę w formacie *HH:MM:SS : YYYY*
   * **date  --date="2 days ago"**
   * **date "+%Y-%m-%d"**
@@ -262,12 +267,12 @@
 
 ---
 ## System
-* **uname -a** - pokazuje informację o systemie Linux
+* **uname -a** - pokazuje informację o systemie Linux
 * **uname -snrvm** - j/w tylko bardziej szczegółowo
 * **reboot** - urucahmia ponownie
 * **shutdown -h {now | liczba minut | godzina:minuta}** - zamyka system natychmiast lub po podanej liczbie minut, lub czasie
 * **init 0** - zabija cały system
-* **uptime -p && uptime -s** - pokazuje czas pracy systemu, oraz datę uruchomienia
+* **uptime -p && uptime -s** - pokazuje czas pracy systemu, oraz datę uruchomienia
 * **getconf LONG_BIT** lub **arch** pokazuje architekturę systemu
 * **dstat** - lista statystyk systemowych
 * **free** pokazuje ilość dostępnej pamięci
@@ -288,7 +293,7 @@
   * **cat /etc/*-release** - j/w
   * **cat /etc/system-release** - j/w
 * **lslk** - lista locków
-* **modprobe -a {modul1} {modul2}** - ładuje podane moduły które pasują do wzorca
+* **modprobe -a {modul1} {modul2}** - ładuje podane moduły które pasują do wzorca
   * **-c** - lista załadowanych modułów
 * **crontab -e** - edycja crontaba
 * **crontab -l** - lista wpisów w contab
@@ -349,7 +354,7 @@
 * **sudo dd if=/dev/zero of={plik}.img bs=1M count=1200 status=progress** - tworzy pusty obraz (1.2GB) (*.iso*, *.image*, */dev/urandom*)
   * **dd if=/dev/mem | hexdump -C | less** - przeglądanie pamięci
   * **dcfldd** - bardziej rozbudowana wersja **dd** [github](https://github.com/adulau/dcfldd)
-* **sudo mkfs -t ext4 {name}.img** - tworzy partycję na podanym obrazie
+* **sudo mkfs -t ext4 {name}.img** - tworzy partycję na podanym obrazie
 * **fdisk -l** - wyświetlenie partycji i informacji na ich temat
 * **sfdisk -l** - bardziej zaawansowany fdisk
 * **lsblk -o NAME,FSTYPE,MOUNTPOINT,PARTLABEL,SIZE,RO** - lista urządzeń blokowych z listą informacji (nazwa, system plików, punkt montowania, label, rozmiar, tylko do odczytu)
@@ -378,7 +383,7 @@
   * **fg {nazwa}** - przywraca podany proces
 * **fg {proces}** - przenosi podany proces w tło
 * **pidof {program}** - zwraca id procesu o podanej nazwie
-* **watch -n 1 -d "{polecenie}"** - uruchamia polecenie i obserwuje wynik co sekundę z zaznaczeniem zmian
+* **watch -n 1 -d "{polecenie}"** - uruchamia polecenie i obserwuje wynik co sekundę z zaznaczeniem zmian
 * **iotop** - pokazuje operacje i/o
 * **jobs** - pokazuje polecenia uruchomione w terminalu i przeniesione w tło
 * **kill %1** - zabija proces w tle
@@ -394,7 +399,7 @@
 * **pidstat -hruvp {pid1}{pid2} 5** - monitoruje 2 procesy i pokazuje co 5s
 * **pmap -x {proces id}** - podaje szczegółowe informacje na temat zużycia pamięci przez proces i jego zależności
 * **ps --no-headers -o "rss,cmd" -C {nazwa procesu} | awk '{ sum+=$1 } END { printf ("%d%s\n", sum/NR/1024,"Mb") }'** - sumaryczne zużycie pamięci dla procesu
-* **timeout 5s {command}** - odpala komendę przez 5 sekund (s, m, h, d) (SIGTERM)
+* **timeout 5s {command}** - odpala komendę przez 5 sekund (s, m, h, d) (SIGTERM)
 * **timeout 8s tail -f {plik}** - tail na pliku przez 8 sekund
   * **-s SIGKILL 3 {command}** - 
   * **-s 9 3 {command}** - 
@@ -417,12 +422,12 @@
 * **ssh-keygen -l -v -f ~/.ssh/id_rsa.pub** - zwraca skrót (sha256) klucza publicznego
 * **mtr {ip lub domena}** - połączenie ping i traceroute
 * **traceroute {ip}** - pokazuje listę punktów przez które idzie połączenie
-* **route** - pokazuje tablicę routingu
+* **route** - pokazuje tablicę routingu
   * **route add -net {ip/zakres} gw {brama}** - dodaje wpis do tablicy routingu (del - kasuje)
 * **scp -r {źródło} {cel}** - kopiuje plik poprzez ssh (user@192.128.0.1:/some/path/file) razem z podkatalogami
   * **-l {val}** - limit transferu w Kbit/s (8000 -> 1MB)
 * **curl ipinfo.io** - bardziej szczegółowe informacje o komputerze
-* **netstat** - wyświetla listę aktywnych połączeń TCP i UDP
+* **netstat** - wyświetla listę aktywnych połączeń TCP i UDP
 * **netstat -at** - lista portów TCP
 * **netstat -ai** - statystyki interfejsów sieciowych
 * **netstat -ant** - pokazuje połączenia sieciowe
@@ -445,12 +450,13 @@
 * **cat /etc/services | less** - podgląd wszystkich portów i programów je wykorzystujących
 * **tcpdump -i any port {port}** - pokazuje całą komunikację na wskazanym porcie
   * **tcpdump -i {nazwa sieci}** - pokazuje całą komunikację na wskazanej sieci (np z ifconfig)
+  * **tcpdump -A -vvvv -s 9999 -i eth1 port 80 > /tmp/headers** - zapisuje headery
 * **curl -D {plik dla nagłówków} {url} > /dev/null** - zapisuje nagłówki do pliku (nie generuje outputu)
 * **curl -o- {url}.sh | bash** - pobiera skrypt i wykonuje go na komputerze
 * **curl -si -H "Host: host.com" "http://server-name/"** - testowanie serwera za load balancerem (host - główna strona, server-name - docelowy serwer za load balancerem)
 * **curl -sS -d key=val {url}** - wysyła dane POST, -sS pokazuje tylko błędy jeśli krytyczne (-G - GET)
   * **-d {key=val}** - post data
-  * **-G {key=val}** - get data
+  * **-G  -d {key=val} -d {key2=val2}** - get data
   * **-H {Name: value}** - header data
   * **-i** - pokazuje headery w output
   * **-I** - pokazuje tylko headery w output
@@ -460,8 +466,8 @@
   * **-O | --remote-name** - nazywa plik tak samo jak ten z serwera
   * **-s** - nie pokazuje błędów i progresu
   * **-S** - pokazuje błędy
-  * **-sS** - pokazuje błędy tylko jeśli zapytanie się nie udało
-  * **-v --ipv4 -I** - pokazuje krok po kroku co dzieje się z zapytaniem
+  * **-sS** - pokazuje błędy tylko jeśli zapytanie się nie udało
+  * **-v --ipv4 -I** - pokazuje krok po kroku co dzieje się z zapytaniem
   * **-k** - pozwala na połączenie jeśli są problemy z certyfikatem ssl
   * **-w {format}** - formatuje wyjście względem ustawionego formatu
   * **-u {username:password}** - logowanie przez basic http authorization
@@ -491,7 +497,7 @@
 * __ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'__ - j/w
 * **nc {ip} {port}** - ustawia połączenie tcp & udp z serwerem
 * **nc -z -v 127.0.0.1 1-1000** - skanowanie portów od 1 do 1000
-  * **nc -z 127.0.0.1 1-100** - tylko te z którymi udało się połączyć
+  * **nc -z 127.0.0.1 1-100** - tylko te z którymi udało się połączyć
   * **nc -z -n -v 127.0.0.1 1-1000 2>&1 | grep succeeded** - j/w
 * **nc -l {port}** - nasłuchuje na porcie
   * **nc -l {port}| tar xzvf -** - zapisuje output do spakowanego pliku
@@ -510,18 +516,19 @@
 * **iwconfig** - ustawia sieć wifi
 * **iptraf** - monitoring sieci LAN
 * **iftop** - monitoring sieci
+* **ab -n 500 http://...** - test wydajnościowy, 500 requestów
 
 ---
 
 ## Inne
 * **reset** - inicjalizuje ponownie konsolę
 * **clear** - czyści wpisy w konsoli
-* **which {nazwa polecenia}** - podaje ścieżkę do polecenia
+* **which {nazwa polecenia}** - podaje ścieżkę do polecenia
   * **-a** - pokazuje wszystkie znalezione ścieżki
-* **whereis {nazwa polecenia}** - podaje ścieżkę do polecenia, źródeł binarnych, bibliotek i pakietów
+* **whereis {nazwa polecenia}** - podaje ścieżkę do polecenia, źródeł binarnych, bibliotek i pakietów
 * **alias fuck='sudo $(history -p \!\!)'** - fuck command
 * **alias fuck='sudo $(fc -ln -1)'** - fuck command 2
-* **history** - pokazuje historię poleceń konsoli
+* **history** - pokazuje historię poleceń konsoli
 * **{polecenie} | column -t** - formatuje wynik polecenia w kolumny
 * **expr {wyrażenie matematyczne}** - rozwiązuje wyrażenia matematyczne
   * **expr {arg1} = {arg2}** - czy oba argumenty są identyczne (|, &, \<, \>, <=, >=, \!=, +, -, *, /, %)
@@ -560,7 +567,7 @@
   * **--log-file** - zapisuje informacje do loga
   * **--exclude '{dir}'** - pomija katalog
 * **for i in {1..10}; do {polecenie}; done** - uruchamia {polecenie} 10x
-* **look {wyraz}** - podpowiada składnię wyrazu
+* **look {wyraz}** - podpowiada składnię wyrazu
 * **md5sum {plik}** - oblicza skrót md5
 * **mkpasswd -l 10** - generuje hasło 10 znakowe trudne do złamania
 * **makepasswd --cahrs 10** - generuje hasło 10 znakowe trudne do złamania
@@ -581,8 +588,8 @@
   * **-c** - pokazuje znaki niedrukowane
   * **-x** - jako wartości hex
   * **-b** - jako wartości octalne
-* **history | cut -c 8- | grep -Eo "^{name}.*" | sort --uniq** - wyszukuje w historii unikalne komendy zaczynające się od wyrażenia
-* **history | cut -c 8- | grep -v "^{name}\|{name2}.*" | sort --uniq** - wyszukuje w historii unikalne komendy nie zaczynające się od wyrażenia name lub name2
+* **history | cut -c 8- | grep -Eo "^{name}.*" | sort --uniq** - wyszukuje w historii unikalne komendy zaczynające się od wyrażenia
+* **history | cut -c 8- | grep -v "^{name}\|{name2}.*" | sort --uniq** - wyszukuje w historii unikalne komendy nie zaczynające się od wyrażenia name lub name2
 * **history | awk '{ $1=""; print }'** - wyświetla tylko komendy z historii (print substr($0,2) - bez spacji na początku)
 * **history | fc -ln** - j/w
 * **for ((i=32;i<=127;i++)); do printf '%03o\t' "$i"; done;echo "\n""** - liczby od 32-127 przedstawione w notacji ósemkowej
@@ -594,13 +601,13 @@
 * **wget -O- -q wttr.in/Poland+{miasto}** - pogoda
 * **type {alias}** - pokazuje komendę powiązaną z podanym aliasem
 * **alias {alias}** - j/w
-* **xfd -fa "{czcionka}"** - pokazuje pełną listę znaków dla podanej czcionki
+* **xfd -fa "{czcionka}"** - pokazuje pełną listę znaków dla podanej czcionki
 * **sudo sshfs -p {port} -o allow_other,IdentityFile={id_rsa} {domena}:{katalog} /mnt/{punk montowania}** - montuje jako dysk katalog na zewnętrznym serwerze
 * **htpasswd -nb -B {user} {pass} | cut -d ":" -f** - generuje i zwraca hash hasła
 * **grep -r -P '[^\x00-\x7f]' {plik}** - wyszukuje znaki unicode w pliku
 * **openssl passwd -apr1** - generuje hash hasła
   * **openssl rand -hex {długość}** - generuje hasło o podanej długości (*2)
-* **mytop** - 
+* **mytop** - pokazuje operacje na bazie mysql
 
 ---
 
@@ -629,7 +636,7 @@
 * **hexdump -C** - pokazuje dane w postaci hex
 * **fold -w 80 -s {plik wejściowy} > {plik wyjściowy}** - dodaje przełamanie linii w pliku w 80 kolumnie
 * **uniq {plik1} {plik2}** - zbiera unikalne wpisy z pliku1 i zapisuje do pliku2
-  * **-c** - podaje liczbę powtórzeń
+  * **-c** - podaje liczbę powtórzeń
   * **-d** - pokazuje tylko zduplikowane linie
   * **-u** - pokazuje tylko nie zduplikowane linie
   * **-w {liczba}** - porównuje podaną liczbę znaków
@@ -678,7 +685,7 @@
 * **ctrl+r** - szuka poprzedniej komendy
 * **ctrl+d** - wylogowuje z obecnej sesji
 * **!!** - powtarza poprzednie polecenie
-* **!-6** - uruchamia komendę uruchomioną 6 kroków wcześniej
+* **!-6** - uruchamia komendę uruchomioną 6 kroków wcześniej
 * **!$** - argumenty poprzednio uruchomionej komendy
 * **!^** - pierwszy argument poprzednio uruchomionej komendy
 * **!{komenda}:2** - drugi argument ostatnio uruchomionej komendy podanej w nawiasach
