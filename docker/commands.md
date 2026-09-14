@@ -13,7 +13,10 @@
 * **docker build -t {image name} {docker conf file}** - Build image from docker configuration file
 * **docker rm {name/hash}** - Remove container (must be killed before)
 * **docker rmi {name/hash}** - Remove image (firs must be killed or removed container)
-* **docker run -id --name {container} {image}** - Create container from image
+* **docker run -id --name {container} {image}** - tworzy i uruchamia kontener z obrazu
+  * **-u www-data** - uruchamia z podanym użytkownikiem
+  * **-it** - uruchamia polecenie w konsoli
+  * **--rm** - kasuje kontener po zamknięciu
 * **docker history {image}** - Show image history
 * **docker run -id -v local/file:/container/file -p 3307:3306 --name {container} {image}** - Create container with file link and port forwarding
 * **docker network inspect {network name}** - Display information about docker internal network
@@ -32,6 +35,8 @@
 * **docker volume ls** - lista volumenów
 * **docker volume rm {nazwa}** - kasowanie volumenów
 * **docker system prune** - 
+* **docker builder prune** - czyście cache buildera obrazów
+* **docker tag {hash} {nazwa obrazu}:{tag}** - nadaje tag dla obrazu
 
 ### Docker compose commands
 
