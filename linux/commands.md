@@ -123,7 +123,7 @@
 * **grep -c "{pattern}" .** - zwraca ilość znalezionych wzorców w plikach
 * **grep -v "{pattern}" .** - zwraca wszystko z pominięciem wzorca
   * **grep -v "^git\|docker"**
-* **grep -C 2 {pattern}** - zwraca 2 linie otaczające znaleziony fragment (2 z góry i 2 z dołu)
+* **grep -C 2 {pattern}** - zwraca 2 linie otaczające znaleziony fragment (2 z góry i 2 z dołu) (-B tylko od góry, -A tylko od dołu)
 * **grep --include={plik} -A 1 -rn {ścieżka} -e {wzorzec}** - szuka wzorca w ścieżce i podanym pliku, wyświetla ścieżkę, numer linii + linia poniżej znalezionej
 * **grep -o {wzorzec} {plik} | sort --unique | wc -l** - ilość unikalnych wystąpień wzorca
 * **grep -o {wzorzec} {plik} | sort | uniq -c** - pokazuje posortowane wzorce + ilość ich wystąpień
@@ -213,6 +213,7 @@
   * **-G** - wszystkie grupy usera
 * **sudo su - {nazwa użytkownika}** - przełącza na konto innego użytkownika
 * **groups** - pokazuje grupy do których należy użytkownik
+* **cat /etc/group** - lista grup
 * **groups {user}** - pokazuje grupy do których należy podany użytkownik
 * **w** - pokazuje kto jest zalogowany i co robi
 * **who** - pokazuje kto jest zalogowany
@@ -224,7 +225,7 @@
   * **-u** - odblokowuje użytkownika
 * **adduser {user} {grupa}** - dodaje nowego użytkownika
 * **useradd {user}** - dodaje nowego użytkownika
-* **useradd -g {grupa} -G {dodanie do grupy} -u {id} {nazwa}** - dodaje usera i grupę, ze wskazanym id usera
+* **useradd -g {grupa} -G {dodanie do grupy} -u {id} -d {katalog domowy} {nazwa}** - dodaje usera i grupę, ze wskazanym id usera
 * **userdel {nazwa}** - usuwa użytkownika
 * **addgroup {nazwa}** - dodaje grupę
 * **groupadd {nazwa}** - dodaje grupę
@@ -439,7 +440,7 @@
 * **sudo adduse -i -P -n | grep LISTEN** - lista otwartych portów i procesów ich nasłuchujących
 * **sudo lsof -i -nP** - pokazuje używane porty oraz powiązane z nimi procesy
 * **nethogs"** - pokazuje zużycie sieci i transfery do konkretnych hostów
-* **ip route get 8.8.8.8 | awk '{print $NF; exit}'** - pokazuje ip komputera wewnątrz sieci
+* **ip route get 8.8.8.8 | awk '{print $7; exit}'** - pokazuje ip komputera wewnątrz sieci
 * **hostname --ip-address** - lokalne ip komputera
 * **nmap -sn {ip}/24** - skanuje adresy w poszukiwaniu działających ip (/24,16,8 - mask adresu np /16 -> 127.0.x.x, 24 -> 127.0.0.x)
 * **nmap {hostname}** - pokazuje otwarte porty i serwisy na podanym hoście
@@ -503,6 +504,7 @@
   * **nc -l {port}| tar xzvf -** - zapisuje output do spakowanego pliku
   * **tar -czf - * | nc {ip} {port}** - wysyła spakowane pliki przez netcata
 * **while true; do printf 'HTTP/1.1 200 OK\n\n%s' "$(cat index.html)" | nc -l {port}; done** - tworzy prosty serwer pokazujący plik index.html (while - żeby działało cały czas)
+* **while [ 1 == 1 ] ; do echo 'done'; sleep 2; done** - inny sposób na nieskończoną pętlę
 * **iptables -I INPUT -p tcp -m tcp --dport {port} -j ACCEPT** - dodaje port do wpisu w+ iptables
 * **iptables -A INPUT -s {ip} -j DROP** - blokuje adres IP
 * **iptables -D INPUT -s {ip} -j DROP** - usuwa z listy blokowanych
@@ -517,6 +519,13 @@
 * **iptraf** - monitoring sieci LAN
 * **iftop** - monitoring sieci
 * **ab -n 500 http://...** - test wydajnościowy, 500 requestów
+* **nmcli -p device show** - szczegółowe informacje o urządzeniach sieciowych
+* **ss -lt** - nasłuchujące (`-l`) gniazda TCP (`-t`)
+* **ss -t** - nawiązane połączenia TCP (bez nasłuchujących)
+* **ss -ta** - wszystkie gniazda TCP — nawiązane i nasłuchujące (`-a`)
+* **ss -l** - wszystkie nasłuchujące gniazda (TCP, UDP, unix)
+* **ss -tapn** - wszystkie gniazda TCP z procesem (`-p`) i bez rozwijania nazw portów/hostów (`-n`)
+* **ss -tapn | grep 9000** - jw. przefiltrowane pod kątem portu 9000 — sprawdzenie kto słucha na 9000 (np. php-fpm)
 
 ---
 
@@ -607,6 +616,8 @@
 * **grep -r -P '[^\x00-\x7f]' {plik}** - wyszukuje znaki unicode w pliku
 * **openssl passwd -apr1** - generuje hash hasła
   * **openssl rand -hex {długość}** - generuje hasło o podanej długości (*2)
+* **htpasswd -nb -B user pass | cut -d ":" -f 2 | sed -- 's/\$/\$\$/g'** - tworzy hasło (pass) dla podanego user
+* **head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo ''** - losowe hasło
 * **mytop** - pokazuje operacje na bazie mysql
 
 ---
@@ -698,9 +709,9 @@
 * **apt install ubuntu-restricted-extras laptop-mode-tools** - kodeki i drivery dla laptopa
 
 ## Suse
-* **cat /var/log/boot.log** - 2
-* **tail -30 /var/log/messages** -
-* **tail -30 /var/log/messages | awk '{print $3,$5,$6,$7,$8,$9,$10}'** -
+* **cat /var/log/boot.log** - log startu systemu — usługi uruchamiane przy bootowaniu (Linux)
+* **tail -30 /var/log/messages** - ostatnie 30 linii głównego logu systemowego (RHEL/CentOS; na Debianie `/var/log/syslog`)
+* **tail -30 /var/log/messages | awk '{print $3,$5,$6,$7,$8,$9,$10}'** - jw. bez daty i hosta — zostaje godzina i treść komunikatu, czytelniej
 * **zypper search -s {openssh}** - szuka pakietu z poprzednimi wersjami
 * **sudo zypper install --oldpackage {openssh-7.6p1-lp150.7.4}** - zainstalowanie starszej wersji pakietu
 * **zypper list-updates** - lista dostępnych updatów
@@ -718,10 +729,10 @@
 
 ## MacOS
 * **diskutil list** - lista urządzeń blokowych
-sudo diskutil unmountDisk
-sudo diskutil unmount
-sudo diskutil eject
-sudo diskutil unmount force /Users/chajr/mount
+* **sudo diskutil unmountDisk** - odmontowuje *cały dysk* ze wszystkimi wolumenami
+* **sudo diskutil unmount** - odmontowuje *pojedynczy wolumen* (lub punkt montowania)
+* **sudo diskutil eject** - odmontowuje i wysuwa nośnik — dysk znika z systemu, bezpieczne odłączenie
+* **sudo diskutil unmount force ~/mount** -  wymusza odmontowanie mimo zajętych plików/procesów (ryzyko utraty niezapisanych danych)
 * **sudo launchctl** - zarządzanie demonami
   * **stop {nazwa}** - zatrzymuje
   * **remove {nazwa}** - zatrzymuje
@@ -730,11 +741,7 @@ sudo diskutil unmount force /Users/chajr/mount
   * **limit maxfiles 65536 unlimited**
   * **load -w /Library/LaunchDaemons/limit.maxfiles.plist** - (unload)
   * **list** - pełna lista demonów systemowych
-  * **restart {nazwa}** -
-  * **runstatus {nazwa}** -
-
+  * **restart {nazwa}** - restart usługi — `-k` ubija działającą i startuje na nowo
+  * **runstatus {nazwa}** - status usługi: PID, ostatni kod wyjścia, ścieżki, limity
 
 ---
-
-
-
