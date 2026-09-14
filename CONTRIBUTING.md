@@ -16,7 +16,7 @@ Jeden katalog na temat, jeden plik na rodzaj treści:
 
 - `{temat}/commands.md` — ściąga poleceń (`sql/` używa `mysql-commands.md`)
 - `{temat}/links.md` — dokumentacja, kursy, narzędzia
-- wszystko inne dostaje opisową nazwę: `php/changes.md`, `magento/magento.md`
+- wszystko inne dostaje opisową nazwę: `php/changes.md`
 
 Nowy temat to nowy katalog. Każdy nowy plik dopisujemy do tabeli w `README.md` — nic jej nie generuje.
 
@@ -50,7 +50,3 @@ https://github.com/vlucas/phpdotenv
 ```
 
 Przed dodaniem linku obcinamy parametry śledzące (`?fbclid=...`, `?utm_source=...`).
-
-## Nie wszystko się trzyma konwencji
-
-`magento/magento.md` powstał przed tymi konwencjami i nadal jest surową listą poleceń. Poprawiamy przy okazji, gdy i tak w nim grzebiemy; nie przepisujemy dla samego przepisywania.
