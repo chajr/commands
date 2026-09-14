@@ -1,6 +1,6 @@
 # Przydatne polecenia kubectl
 
-### Cluster info
+### Informacje o klastrze
 
 * **kubectl cluster-info** - adresy master node i usług klastra
 * **kubectl version --client** - wersja samego klienta, bez łączenia się z klastrem
@@ -20,7 +20,7 @@
 * **-n {namespace}** - działa dla większości poleceń, wymusza namespace jednorazowo
 * **-A** / **--all-namespaces** - zamiast jednego namespace bierze wszystkie
 
-### Pods
+### Pody
 
 * **kubectl get pods** - lista podów w aktualnym namespace
   * **-o wide** - dodatkowo node i IP poda
@@ -32,7 +32,7 @@
   * **--force** - gdy pod wisi w `Terminating` i nie chce zniknąć
 * **kubectl get pod | grep Evicted | awk '{print $1}' | xargs kubectl delete pod** - sprząta pody wyrzucone przez brak zasobów na node
 
-### Logs
+### Logi
 
 * **kubectl logs {pod}** - logi poda
   * **-f** - śledzi logi na bieżąco (jak `tail -f`)
@@ -42,7 +42,7 @@
 * **kubectl logs -l {label}={wartość}** - logi ze wszystkich podów pasujących do labelki, bez szukania nazw
   * `kubectl logs -n kube-system -l app.kubernetes.io/name=karpenter --since=5m`
 
-### Exec i port forwarding
+### Wejście do kontenera i przekierowanie portów
 
 * **kubectl exec -it {pod} -- bash** - wchodzi do kontenera (`sh`, jeśli obraz nie ma basha)
 * **kubectl exec {pod} -- {polecenie}** - jednorazowe polecenie w kontenerze, bez interaktywnej konsoli
@@ -52,7 +52,7 @@
 * **kubectl cp {pod}:{ścieżka w kontenerze} {ścieżka lokalna}** - kopiuje plik z kontenera
 * **kubectl cp {ścieżka lokalna} {pod}:{ścieżka w kontenerze}** - kopiuje plik do kontenera
 
-### Deployments i skalowanie
+### Deploymenty i skalowanie
 
 * **kubectl get deployments** - lista deploymentów
 * **kubectl apply -f {plik.yaml}** - tworzy lub aktualizuje zasoby z pliku
@@ -63,7 +63,7 @@
 * **kubectl scale deployment {deployment} --replicas={liczba}** - zmienia liczbę replik (`0` wyłącza usługę, nie kasując deploymentu)
 * **kubectl get hpa** - autoscalery: aktualne i docelowe obciążenie, min/max replik
 
-### Nodes, sieć i storage
+### Nody, sieć i dyski
 
 * **kubectl get nodes -o wide** - nody z wersją kubeleta, systemem i IP
 * **kubectl describe node {node}** - zasoby, warunki i pody działające na node
@@ -73,12 +73,12 @@
 * **kubectl get pv** / **kubectl get pvc** - wolumeny i roszczenia do wolumenów
 * **kubectl describe pvc {pvc}** - dlaczego PVC wisi w `Pending`
 
-### Events
+### Eventy
 
 * **kubectl get events -A** - eventy ze wszystkich namespace
 * **kubectl get events -A --sort-by='.metadata.creationTimestamp'** - to samo, chronologicznie (domyślna kolejność jest losowa)
 
-### Secrets
+### Sekrety
 
 * **kubectl get secret** - lista sekretów
 * **kubectl get secret {secret} -o jsonpath='{.data}'** - zawartość sekretu (wartości zakodowane base64)

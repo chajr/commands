@@ -1,6 +1,6 @@
 # Przydatne polecenia GIT
 
-## basics
+## Podstawy
 
 * **git init** - inicjalizuje repozytorium GIT w katalogu
 * **git clone {adres repozytorium}** - klonuje repozytorium do katalogu
@@ -10,7 +10,7 @@
 * **git config --global color.ui auto** - włącza koloryzowanie wyników w konsoli
 * **git config --global core.pager '{nazwa}'** - ustawia program do przeglądania logów (brak w konsoli)
 
-## repo
+## Repozytoria
 
 * **git fetch -p** - kasuje branche już nie istniejąca na głównym repo
 * **git fetch {nazwa remota}** - pobiera listę zmian z innego repozytorium (w tym pokazuje nowe gałęzie)
@@ -41,7 +41,7 @@
 * **git rm --cached (plik/katalog)** - usuwa plik/katalog z repozytorium, pozostawiając go na dysku
   **-r** - dla całych katalogów
 
-## commit
+## Commitowanie
 
 * **git commit** - tworzy commita z aktualnie zmienionych plików
 * **git commit -m "wiadomosc"** - tworzy commmita z podaną w cudzysłowach wiadomością
@@ -53,7 +53,7 @@
 * **git amend** - zmienia poprzedniego commita
 * **git shortlog -sn** - ile commitów zrobionych przez userów
 
-## log
+## Historia zmian
 
 * **git log** - wyświetla listę commitów (od najnowszego)
 * **git log -{numer}** wyświetla podaną liczbę ostatnich commitów
@@ -83,7 +83,7 @@
 * **git log --all --full-history -- {plik}** - pełna historia pliku
 * **git log -- /path/to/file** - historia commitów tego pliku (działa też dla już skasowanego)
 
-## merge
+## Scalanie
 
 * **git merge {nazwa gałęzi}** - dołączenie zmian ze wskazanej gałęzi
 * **git merge {nazwa remota}/{nazwa gałęzi}** - dołączenie zmian ze wskazanego remota i gałęzi
@@ -91,7 +91,7 @@
 * **git merge --continue** - po rozwiązaniu konfliktów zapisuje zmiany
 * **git merge --revert** - cofa wszystkie wprowadzone zmiany
 
-## rebase
+## Rebase
 
 * **git rebase {nazwa gałęzi}** - dołączenie zmian ze wskazanej gałęzi z zachowaniem kolejności wprowadzania zmian
 * **git rebase {nazwa remota}/{nazwa gałęzi}** - dołączenie zmian ze wskazanego repozytorium i gałęzi z zachowaniem kolejności wprowadzania zmian
@@ -100,7 +100,7 @@
 * **git rebase --interactive {commit}** - pozwala wybrać commity które zostaną dołączone (lub modyfikować)
 * **git rebase --interactive '{hash}^'** - umożliwia edycję commitów do podanego hasha
 
-## diff
+## Porównywanie zmian
 
 * **git diff --name-only {gałąź 1} {gałąź 2}** - porównanie dwóch gałęzi
 * **git diff --cached** - pokazuje wszystkie gotowe do commitu zmiany
@@ -119,7 +119,7 @@
 * **git diff -p -R --no-color | grep -E "^(diff|(old|new) mode)" --color=never | git apply** - resetuje zmiany w atrybutach plików
 * **git diff -w --no-color | git apply --cached --ignore-whitespace** - stage'uje zmiany pomijając te, które są tylko whitespace
 
-## show
+## Podglądanie commitów
 
 * **git show {commit}** - szczegóły podanego commita
 * **git show --name-only {commit}** - nazwy zmodyfikowanych plików w commicie
@@ -130,7 +130,7 @@
   * **--color-words** - pokaże bez +/-
 * **git show <SHA> -- /path/to/file** - pokazuje diff tego pliku w tym commicie
 
-## branch
+## Gałęzie
 
 * **git branch** - lista gałęzi w repozytorium
 * **git branch -a** - pokazuje listę wszystkich gałęzi (łącznie z tymi z repo, same z repo `-r`)
@@ -148,7 +148,7 @@
 * **git branch rename {stara nazwa} {nowa nazwa}** - zmiana nazwy brancha
 * **git branch -m {stara nazwa} {nowa nazwa}** - zmiana nazwy brancha
 
-## stash
+## Odkładanie zmian
 
 * **git stash** - zapisuje nowe i zmodyfikowane pliki do pamięci podręcznej
 * **git stash pop** - przywraca zapisane pliki z pamięci podręcznej
@@ -164,7 +164,7 @@
 * **git stash branch {name}** - stworzy nową gałąź, pobierze ostatnią wersję plików
 * **git stash push -m {message} {plik}** - stashuje z komentarzem wskazany plik
 
-## tag
+## Tagi
 
 * **git tag -l** - lista tagów
 * **git tag -a {} -m '{}'** -
@@ -187,6 +187,6 @@
 * **git log --format='%aN' | sort -u** - lista wszystkich autorów
 * **git checkout <SHA> -- /path/to/file** - wraca wersję pliku z commita do working tree i indeksu
 
-### Extra
+### Dodatkowe
 
 [wiele przydatnych aliasów](https://github.com/jakubnabrdalik/gitkurwa)

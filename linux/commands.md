@@ -107,7 +107,14 @@
   * **-c5** - 5 ostatnich bajtów
 * **stat {nawza pliku}** - rozszerzone informacje o pliku
   * **-f** - status systemowy
-  * **--printf='%U\n%G\n%C\n%z\n'** - zmiana formatu (%U – user name of owner %G – group name of owner %C – SELinux security context string %z – time of last status change, human-readable %n – shows the file name %a – print free blocks available to non-superuser %b – outputs total data blocks in file system)
+  * **--printf='%U\n%G\n%C\n%z\n'** - własny format wyniku
+    * **%U** - nazwa właściciela
+    * **%G** - nazwa grupy właściciela
+    * **%C** - kontekst bezpieczeństwa SELinux
+    * **%z** - data ostatniej zmiany statusu, czytelna dla człowieka
+    * **%n** - nazwa pliku
+    * **%a** - wolne bloki dostępne dla zwykłego użytkownika
+    * **%b** - liczba bloków danych w systemie plików
 * **file {nazwa pliku}** - pokazuje typ pliku i kodowanie
   * **-i** - uproszczona informacja
   * **-f {plik źródłowy}** - informacje o plikach z pliku źródłowego
@@ -306,7 +313,7 @@
 * **ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head** - zwraca procesy zużywające najwięcej ram-u i cpu
 * **cat /proc/meminfo** - szczegóły na temat pamięci
 * **vmstat** - informacje o pamięci virtualnej
-* **dmidecode** - DMI table decoder
+* **dmidecode** - odczytuje tablicę DMI (informacje o sprzęcie z BIOS-u)
 
 ### Urządzenia
 * **mount {urządzenie} {ścieżka docelowa}** - montuje urządzenie
@@ -326,7 +333,7 @@
 * **lsblk** - szczegółowe informacje na temat urządzeń blokowych
 * **lspci** - urządzenia podpięte pod szynę PCI
 * **watch "dmesg | tail -20"** - podgląd na żywo logów systemowych
-* **hciconfig -a** - Bluetooth info
+* **hciconfig -a** - informacje o urządzeniach Bluetooth
 * **awk '/sd/ {print $3"\t"$10 / 2 / 1024}' /proc/diskstats** - pokazuje statystyki dysków zaczynających sie na `sd`
 * **udevadm info -q all -n /dev/sda1** - szczegółowe informacje na temat dysku
 * **udevadm monitor** - monitoruje urządzenia
@@ -558,10 +565,10 @@
 * **xxd -c 1 {plik}** - wyświetla wartości hex dla każdego znaku linia po linii
 * **rsync -vrpogthl --progress {katalog} {katalog backupu}** - wykonuje backup katalogu, aktualizuje jedynie to co się zmieniło (opcje zapewniają backup praw, własności, czasów modyfikacji plików i symlinki jako symlinki)
   * **-e 'ssh -p {port}'** - połączenie na innym niż domyślny port
-  * **-L** - Podąża za symlinkami
+  * **-L** - podąża za symlinkami
   * **-a** - pomija symlinki
   * **-z** - kompresuje pliki do przesyłania
-  * **-P** - --progress and --partial
+  * **-P** - to samo co `--progress --partial`: pasek postępu i wznawianie przerwanych plików
   * **-v** - zwiększa ilość informacji
   * **-r** - rekursywnie
   * **-p** - zachowuje uprawnienia
@@ -586,10 +593,10 @@
 * **echo -n "Hello" | od -A n -t x1** - wyświetla tekst jako wartości hex
 * **echo -n "Hello" | hd** - wyświetla tekst jako wartości hex + oryginalny string (hd, xxd)
 * **echo -e "text"** - interpretuje sekwencje ucieczki (np \n jako nową linię, \t jako tabulator) 
-  * **-n** - do not print the trailing newline.
+  * **-n** - nie dodaje znaku nowej linii na końcu
   * **\b** - backspace
   * **\\** - backslash
-  * **\n** - new line
+  * **\n** - nowa linia
   * **\r** - carriage return
   * **\t** - horizontal tab
   * **\v** - vertical tab
@@ -602,7 +609,7 @@
 * **history | awk '{ $1=""; print }'** - wyświetla tylko komendy z historii (print substr($0,2) - bez spacji na początku)
 * **history | fc -ln** - j/w
 * **for ((i=32;i<=127;i++)); do printf '%03o\t' "$i"; done;echo "\n""** - liczby od 32-127 przedstawione w notacji ósemkowej
-* **mysqldump --host -u  -p --no-create-info --single-transaction -d {db_name} > sb.sql** - eksport danych bez info
+* **mysqldump --host {host} -u {użytkownik} -p --no-create-info --single-transaction -d {baza} > dump.sql** - eksport samych danych, bez `CREATE TABLE`
   * **--no-create-db --where="date_time>'2015-08-01'"**
   * **mysqluc -e "help utilities"**
 * **tig** **grv** - wizualna reprezentacja git-a
@@ -655,15 +662,15 @@
 ---
 
 ## Terminal
-* **{command} 1> {file|program}** - Redirect stdout to file or program
-* **{command} 1>> {file|program}** - Redirect and append stdout to file or program
-* **{command} 2> {file|program}** - Redirect stderr to file or program
-* **{command} 2>> {file|program}** - Redirect and append stderr to file or program (to samo co {command} >> {plik} 2>&1)
-* **{command} &>> {file|program}** - Redirect both stdout and stderr to file or program
-* **{command} >> {file|program} 2>&1** - Redirect both stdout and stderr to file or program
-* **{command} 2>&1** - Redirect stderr to stdout
-* **{command} > /dev/null 2>&1** - Redirect whole output to /dev/null
-* **{command} &> /dev/null** - Redirect whole output to /dev/null
+* **{polecenie} 1> {plik|program}** - przekierowuje stdout do pliku lub programu
+* **{polecenie} 1>> {plik|program}** - dopisuje stdout do pliku lub programu
+* **{polecenie} 2> {plik|program}** - przekierowuje stderr do pliku lub programu
+* **{polecenie} 2>> {plik|program}** - dopisuje stderr do pliku lub programu (to samo co `{polecenie} >> {plik} 2>&1`)
+* **{polecenie} &>> {plik|program}** - dopisuje stdout i stderr do pliku lub programu
+* **{polecenie} >> {plik|program} 2>&1** - dopisuje stdout i stderr do pliku lub programu
+* **{polecenie} 2>&1** - przekierowuje stderr na stdout
+* **{polecenie} > /dev/null 2>&1** - wyrzuca całe wyjście do /dev/null
+* **{polecenie} &> /dev/null** - wyrzuca całe wyjście do /dev/null
 * **echo -n "{tekst}"** - wyświetla tekst bez znaku nowej linii
 * **echo "\u9c93"** - 鲓
 * **echo "\ue0b0 \u00b1 \ue0a0 \u27a6 \u2718 \u26a1 \u2699"** -  ±  ➦ ✘ ⚡ ⚙
@@ -673,7 +680,7 @@
 * **script -f /dev/tty3** - zapisuje wszystkie informacje z terminala (np zapis wszystkich działań w terminalu) do innego terminala, lub pliku (-f {plik})
 * **retty $({id procesu})** - przełącza proces z innego terminala na obecny
 * **... | bash -s {param}** - uruchamia skrypt w bash i podaje na standardowe wejście parametr
-* **fc** - history manager
+* **fc** - edytor historii poleceń
 * **echo $(( 2#101011 ))** - zamienia binary na decimal (101011 -> 43)
 * **echo "obase=2; {liczba}" | bc** - decimal do binary
 * **echo "obase=8; {liczba}" | bc** - decimal do octal
