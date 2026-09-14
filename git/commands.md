@@ -4,7 +4,7 @@
 
 * **git init** - inicjalizuje repozytorium GIT w katalogu
 * **git clone {adres repozytorium}** - klonuje repozytorium do katalogu
-* **git status** - pokazuje status repozytorium (pokazuje informację o zmodyfikowanych, nowych, usuniętych oraz nie należące do repozytorium plikach)
+* **git status** - pokazuje status repozytorium (pokazuje informację o zmodyfikowanych, nowych, usuniętych oraz nie należące do repozytorium plikach)
 * **git add {ścierzka do pliku}** - dodaje plik do repozytorium (np. `git add folder/plik.php`)
 * **git add -A** - dodaje wszystkie nie należące do repozytorium pliki
 * **git config --global color.ui auto** - włącza koloryzowanie wyników w konsoli
@@ -47,7 +47,7 @@
 * **git commit -m "wiadomosc"** - tworzy commmita z podaną w cudzysłowach wiadomością
 * **git commit --amend -m "{wiadomość}"** - umożliwia zmianę ostatniego commita
 * **git commit --amend -m "dsfsdf"** - modyfikuje komentarz ostatniego commita
-* **git commit --date="2017-08-18T13:23:41" -m ""** - comit ze wskazaną datą
+* **git commit --date="2017-08-18T13:23:41" -m ""** - comit ze wskazaną datą
 * **git commit -n** - pomija git hooks
 * **git revert {numer commita}** - tworzy nowego commita z cofnięciem zmian ze wskazanego commita
 * **git amend** - zmienia poprzedniego commita
@@ -69,7 +69,7 @@
 * **git log {commit1}..{commit} --no-merges** - pokazuje zmiany pomiędzy 2 commitami bez info o mergach
 * **git log -- {plik/katalog}** - log dla pojedyńczego pliku lub wszystkich plików z katalogu
 * **git log -5 --pretty=tformat: --numstat** - satystyki zmian w 5 commitach
-* **git log --no-merges --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=iso** - 
+* **git log --no-merges --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=iso** -
 * __git log --pretty=format:'* %s (%an)' -n 10__ - pokazuje tylko nazwy commitów
 * **git log --pretty=oneline -15 | awk '{print $2}' | sort | uniq | grep -i {ticket} | sed 's/\[\(.*\)\]/\1/g'** - pokaże tylko nazwy ticketów (gdy message zgody z formatem [NAME-111] some message)
 * **git log --grep {nazwa}** - szuka commita zawierającego podany tekst
@@ -80,6 +80,8 @@
 * **log --pretty=format:'%C(yellow)%p..%h %C(white dim)%cd %<|(49,trunc)%an %C(reset)%s' --date=short --abbrev=8 --no-merges** - logi z zakresem branchy
 * **git log --oneline {branch1} --not {branch2}** - pokazuje różnice w commitach między branchami (branche których brakuje w branch2 a są w branch1)
 * **git log --oneline --grep {branch} --name-only | grep -v {branch} | sort | uniq** - pokazuje tylko zmienione pliki dla podanego brancha
+* **git log --all --full-history -- {plik}** - pełna historia pliku
+* **git log -- /path/to/file** - historia commitów tego pliku (działa też dla już skasowanego)
 
 ## merge
 
@@ -103,10 +105,10 @@
 * **git diff --name-only {gałąź 1} {gałąź 2}** - porównanie dwóch gałęzi
 * **git diff --cached** - pokazuje wszystkie gotowe do commitu zmiany
 * **git diff --cached | grep -wi {fraza}** - szuka podanej frazy w commicie
-* **git diff --cached | grep -wiHn -C 10 {fraza}** - jw ale pokazuje 10 lini przed i po znalezieniu + numery linni i nazwę pliku
+* **git diff --cached | grep -wiHn -C 10 {fraza}** - jw ale pokazuje 10 lini przed i po znalezieniu + numery linni i nazwę pliku
 * **git diff --name-only HEAD HEAD~14** - pokazuje zmieniony pliki z 14 ostatnich commitów
-* **git diff {commit1}..{commit2}** - pokazuje różnicę między 2 commitami
-* **git diff {commit1}..{commit2} {plik}** - pokazuje różnicę między 2 commitami dla podanego pliku
+* **git diff {commit1}..{commit2}** - pokazuje różnicę między 2 commitami
+* **git diff {commit1}..{commit2} {plik}** - pokazuje różnicę między 2 commitami dla podanego pliku
 * **git diff {commit} -- plik** - pokazuje zmiany w pliku od podanego commita
 * **git diff-index --name-only --cached --diff-filter=ACMR HEAD**
 * **git diff {commit}** - różnica od podanego commita
@@ -115,6 +117,7 @@
 * **git diff .** - pokazuje zmiany dokonane na wszystkich zmienionych plikach
   * **--color-words** - pokaże bez +/-
 * **git diff -p -R --no-color | grep -E "^(diff|(old|new) mode)" --color=never | git apply** - resetuje zmiany w atrybutach plików
+* **git diff -w --no-color | git apply --cached --ignore-whitespace** - stage'uje zmiany pomijając te, które są tylko whitespace
 
 ## show
 
@@ -125,6 +128,7 @@
 * **git show HEAD:{plik}** - pokazuje zmiany tylko w konkretnym pliku
 * **git show {commit} --name-only -p -5** - pokazuje 5 poprzednich comitów od podanego
   * **--color-words** - pokaże bez +/-
+* **git show <SHA> -- /path/to/file** - pokazuje diff tego pliku w tym commicie
 
 ## branch
 
@@ -138,7 +142,7 @@
 * **git branch rename {1} {2}** - zmiana nazwy brancha
 * **git branch | grep -v "master" | xargs git branch -D** - kasuje wszystkie branche z wyjątkiem mastera
 * **git checkout {nazwa gałęzi}** - przełącza na podaną gałąź
-* **git checkout -b {nazwa gałęzi}** - tworzy nową gałąź o podanej nazwie i automatycznie przełącza się na niego
+* **git checkout -b {nazwa gałęzi}** - tworzy nową gałąź o podanej nazwie i automatycznie przełącza się na niego
 * **git checkout -b {nazwa gałęzi} {nazwa remota}/{nazwa gałęzi}** - tworzy nową gałąź o podanej nazwie, pobiera zmiany ze wskazanego repozytorium i gałęzi i automatycznie przełącza się na niego
 * **git checkout {nazwa pliku}** - cofa zmiany na podanym pliku
 * **git branch rename {stara nazwa} {nowa nazwa}** - zmiana nazwy brancha
@@ -163,7 +167,7 @@
 ## tag
 
 * **git tag -l** - lista tagów
-* **git tag -a {} -m '{}'** - 
+* **git tag -a {} -m '{}'** -
 * **git tag --sort=v:refname |  tail -2 | xargs printf \"%s..%s\" | xargs git log --no-merges --pretty=format:%s** - wyświetla wszystkie commity między 2 ostatnimi tagami (| grep -o "SOC-[0-9]*" | sort --unique** - tickety)
 * **git tag -l "{pattern}"** - lista tagów pasująca do wzorca
 * **git tag -d {tag} && git push origin :refs/tags/{tag}** - kasuje taga lokalnie + repo
@@ -171,7 +175,8 @@
 
 ## Inne
 
-* **git reset --soft HEAD~3**; __git commit -m__ - pozwala na cofnięcie się 3 commity do tyłu, i połączenie ich w jeden (git commit --amend)
+* **git clean -fd** - kasuje z repo pliki które nie są jego częścią, ani nie są ignorowane
+* **git reset --soft HEAD~3**; __git commit -m__ - pozwala na cofnięcie się 3 commity do tyłu, i połączenie ich w jeden (git commit --amend)
 * **git rebase -i {commit}** - j/w ale commity wybierane ręcznie
 * **git log -i -1 --pretty="format::%an <%ae>\n" --author="$1"** - info o userze
 * **git show -s --pretty='tformat::%h (%s, %ad)' --date=short** - info o branchu
@@ -179,6 +184,8 @@
 * **git fetch && git log --oneline HEAD..origin/$1** - ostatnie zmiany na podanym branchu
 * **git shortlog HEAD..origin/$0** - kto ostatnio robił zmiany i jakie
 * **for branch in `git branch -r | grep -v HEAD`;do echo `git show -s --format=\"%Cred%ci %C(green)%h %C(yellow)%cr %C(magenta)%an %C(blue)\" $branch | head -n 1` \\\t$branch; done | sort -r** - jakie branche sa na orginie, jak dawno i kto je tworzył
+* **git log --format='%aN' | sort -u** - lista wszystkich autorów
+* **git checkout <SHA> -- /path/to/file** - wraca wersję pliku z commita do working tree i indeksu
 
 ### Extra
 
