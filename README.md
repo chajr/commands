@@ -9,6 +9,7 @@ Notatki są po polsku.
 | Plik | Co w środku |
 |---|---|
 | [AI-Claude/commands.md](AI-Claude/commands.md) | Claude Code: polecenia wbudowane oraz skille ponytail, BMAD i superpowers |
+| [Azure/commands.md](Azure/commands.md) | Azure CLI: Container Apps i joby, Key Vault, role i service principale, logi, sieć |
 | [docker/commands.md](docker/commands.md) | Docker i Docker Compose: kontenery, obrazy, sieci, volumeny, zużycie dysku |
 | [git/commands.md](git/commands.md) | Git: gałęzie, commity, historia, scalanie, rebase, stash, ratowanie się z błędów |
 | [linux/commands.md](linux/commands.md) | Konsola Linuksa: pliki, katalogi, archiwa, procesy, sieć, dyski, użytkownicy, media |
