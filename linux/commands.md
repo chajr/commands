@@ -428,6 +428,8 @@
 * **ifup {nazwa sieci}** - uruchamia sieć (ifdown - wyłącza)
 * **ssh-keygen** - generuje nowy klucz ssh
 * **ssh-keygen -l -v -f ~/.ssh/id_rsa.pub** - zwraca skrót (sha256) klucza publicznego
+* **ssh -L {local port}:127.0.0.1:15672 {user@serwer}** - tunelowanie portu, lokalny port 15672 przekierowuje na serwerze na 15672 (localhost:15672)
+  * **-N** - bez konsoli
 * **mtr {ip lub domena}** - połączenie ping i traceroute
 * **traceroute {ip}** - pokazuje listę punktów przez które idzie połączenie
 * **route** - pokazuje tablicę routingu
